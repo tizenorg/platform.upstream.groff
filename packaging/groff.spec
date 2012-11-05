@@ -1,20 +1,11 @@
-#
-# Please submit bugfixes or comments via http://bugs.tizen.org/
-#
-
-%{!?with_x:%define with_x 0}
-
 Name:           groff
-Version:        1.20.1
+Version:        1.21
 Release:        1
 License:        GPLv3+ and GFDL and BSC and MIT
 Summary:        A document formatting system
 Url:            http://groff.ffii.org
 Group:          Applications/Publishing
-Source:         %{name}-%{version}.tar.bz2
-Patch1:         groff-info-missing-x11.patch
-Patch2:         groff-japanese-charclass.patch
-Patch3:         groff-japanese-wcwidth.patch
+Source:         %{name}-%{version}.tar.gz
 BuildRequires:  bison
 BuildRequires:  zlib-devel
 Requires:       /usr/bin/mktemp
@@ -42,38 +33,10 @@ for creating PostScript font files, the grog utility that can be used
 to automatically determine groff command-line options, and the
 troff-to-ps print filter.
 
-%if %{with_x}
-%package gxditview
-Summary:        An X previewer for groff text processor output
-Group:          Applications/Publishing
-BuildRequires:  imake
-BuildRequires:  libX11-devel
-BuildRequires:  libXaw-devel
-BuildRequires:  libXext-devel
-BuildRequires:  libXpm-devel
-BuildRequires:  libXt-devel
-BuildRequires:  xorg-x11-proto-devel
 
-%description gxditview
-Gxditview displays the groff text processor's output on an X Window
-System display.
-%endif
-
-%package doc
-Summary:        Documentation for groff document formatting system
-Group:          Documentation
-Requires:       groff = %{version}
-
-%description doc
-The groff-doc package includes additional documentation for groff
-text processor package. It contains examples, documentation for PIC
-language and documentation for creating PDF files.
 
 %prep
 %setup -q
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
 
 %build
 %configure --enable-multibyte
