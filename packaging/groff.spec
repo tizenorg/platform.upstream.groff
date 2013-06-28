@@ -6,6 +6,7 @@ Summary:        A document formatting system
 Url:            http://groff.ffii.org
 Group:          Applications/Publishing
 Source:         %{name}-%{version}.tar.gz
+Source1001: 	groff.manifest
 BuildRequires:  bison
 BuildRequires:  zlib-devel
 Requires:       /usr/bin/mktemp
@@ -37,6 +38,7 @@ troff-to-ps print filter.
 
 %prep
 %setup -q
+cp %{SOURCE1001} .
 
 %build
 %configure --enable-multibyte
@@ -94,10 +96,12 @@ mv %{buildroot}%{_libdir}/groff/groffer/* %{buildroot}/%{_datadir}/groff/%{versi
 %remove_docs
 
 %files -f groff-files
+%manifest %{name}.manifest
 %defattr(-,root,root,-)
 %{_datadir}/groff
 
 %files perl
+%manifest %{name}.manifest
 %defattr(-,root,root,-)
 %{_bindir}/grog
 %{_bindir}/mmroff
