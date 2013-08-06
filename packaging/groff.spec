@@ -1,10 +1,10 @@
 Name:           groff
 Version:        1.21
 Release:        1
-License:        GPLv3+ and GFDL and BSC and MIT
+License:        BSD-3-Clause and GPL-2.0+
 Summary:        A document formatting system
 Url:            http://groff.ffii.org
-Group:          Applications/Publishing
+Group:          Base/Utilities
 Source:         %{name}-%{version}.tar.gz
 Source1001: 	groff.manifest
 BuildRequires:  bison
@@ -25,7 +25,6 @@ groff-gxditview package.
 
 %package perl
 Summary:        Parts of the groff formatting system that require Perl
-Group:          Applications/Publishing
 
 %description perl
 The groff-perl package contains the parts of the groff text processor
@@ -96,11 +95,13 @@ mv %{buildroot}%{_libdir}/groff/groffer/* %{buildroot}/%{_datadir}/groff/%{versi
 %remove_docs
 
 %files -f groff-files
+%license COPYING LICENSES
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
 %{_datadir}/groff
 
 %files perl
+%license COPYING LICENSES
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
 %{_bindir}/grog
