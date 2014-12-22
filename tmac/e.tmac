@@ -253,7 +253,7 @@
 .	sp |\\n(tmu		\" move to top of text
 .ev
 .mk _k				\" for columned output
-.if \\n(?n .nm 1		\" restore line numbering if n1 mode
+.if \\n(?n=1 .nm 1		\" restore line numbering if n1 mode
 .nr $c 1			\" set first column
 .if \n@>4 .tm -- @h >> .ns nl=\\n(nl %=\\n% _k=\\n(_k tm=\\n(tm
 .ie \\n(?s \
@@ -297,9 +297,13 @@
 .if \\n(?T \
 \{\
 .	nr _i \\n(.i
+.	if \\n(?n \
+.		nm \\n(ln
 .	in 0
 .	|h\"			\" output the table header
 .	in \\n(_iu
+.	if \\n(?n \
+.		nm
 .	rr _i
 .	mk #T			\" for tbl commands
 .	ns
@@ -351,7 +355,11 @@
 .in 0
 .if \n@>2 .tm @o last printed text = \\n(nl placing @r trap at -\\n(_B
 .wh -\\n(_Bu @r
+.if \\n(?n \
+.	nm \\n(ln
 .|f
+.if \\n(?n \
+.	nm
 .fi
 .if \n@>2 .tm @o triggered @r (?o) = \\n(?o
 .if \\n(?o \
@@ -394,9 +402,13 @@
 .	sz \\n(tp\"		\" set header/footer type fonts, etc.
 .	@F \\n(tf
 .	lt \\n(_Lu		\" make title span entire page
+.	if \\n(?n \
+.		nm \\n(ln
 .	nf
 .	\\$1
 .	br
+.	if \\n(?n \
+.		nm
 .\}
 ..
 .
@@ -499,23 +511,58 @@
 .
 .de bl			\" *** contiguous blank lines
 .br
+.@s \\$1
+.sp \\$1
+..
+.
+.de @s			\" --- diversion-surviving space test
 .ne \\$1
 .rs
-.sp \\$1
+.if !'\\n(.z'' \!.@s \\$1
 ..
 .
 .de n1			\" *** line numbering 1
 .nm 1
-.xl -\w'0000'u
+.ll -\w'0000'u
 .nr ?n 1
 ..
 .
 .de n2			\" *** line numbering 2
-.nm \\$1
 .ie \\n(.$ \
-.	xl -\w'0000'u
+\{\
+.	ie !`\\$2`c` \
+.		po -\w'0000'u
+.	el \
+.		ll -\w'0000'u
+.	ie \\B`\\$1` \
+\{\
+.		ds |i \\$1
+.		ds |j \\$1
+.		do substring |i 0 0  \" pick off leading char and rest to check
+.		do substring |j 1    \" for +N / -N
+.		ie `\\*(|i`+` \
+.			nr ln (\\n[_ln])+\\*(|j
+.		el \
+.			ie `\\*(|i`-` \
+.				nr ln (\\n[_ln])-\\*(|j
+.			el \
+.				nr ln \\$1  \" unsigned N
+.		nm \\n(ln
+.		nr ?n 2
+.		rm |i |j
+.\}
+.	el \
+.		tm Line \\n(.c -- Bad .n2 value
+.\}
 .el \
-.	xl \\n($lu
+\{\
+.	nm
+.	nr _ln \\n(ln
+.	po +\w'0000'u
+.	ll \\n($lu
+.	nr ?n 0
+.	nr ln 0
+.\}
 ..
 .
 .de pa			\" *** new page
@@ -818,7 +865,7 @@
 ..
 .
 .
-.\"		*** COLUMNNED OUTPUT ***
+.\"		*** COLUMNED OUTPUT ***
 .
 .
 .de 2c			\" *** double columned output
@@ -830,7 +877,7 @@
 .if \\n(.$>1 \
 .	nr $m \\$2
 .if \\n(.$>0 \
-.	nr $s \\$1n		\" param 1: column seperation
+.	nr $s \\$1n		\" param 1: column separation
 .nr $l (\\n(.l-((\\n($m-1)*\\n($s))/\\n($m
 .xl \\n($lu
 .mk _k
@@ -914,7 +961,11 @@
 .ls 1
 .in 0
 .sp \\n(zsu
+.if \\n(?n \
+.	nm \\n(ln
 .\\$1
+.if \\n(?n \
+.	nm
 .ec
 .br
 .rm \\$1
@@ -942,15 +993,8 @@
 .@)
 .if (\\n(bt=0):(\\n(.t<\\n(bt) \
 .	ne \\n(dnu		\" make it all on one page
-.ls 1
-.nf
-.|k
-.ec
-.fi
-.in 0
-.xl \\n($lu
-.ev
-.rm |k
+.@k |k
+.ev                             \" return from display environment
 .sp \\n(bsu+\\n(.Lv-1v
 ..
 .
@@ -991,7 +1035,9 @@
 ..
 .
 .de (c			\" *** begin block centered text
+.br
 .if "\\n(.z"|c" .tm Line \\n(c. -- Nested .(c requests
+.if \\n(?n .nm
 .di |c
 ..
 .
@@ -1004,11 +1050,15 @@
 .ls 1
 .in (\\n(.lu-\\n(.iu-\\n(dlu)/2u
 .if \n@>4 .tm -- .)c << .in .l=\\n(.l .i=\\n(.i dl=\\n(dl
+.if \\n(?n \
+.	nm \\n(ln
 .nf
 .|c
 .ec
 .in
 .ls
+.if \\n(?n \
+.	nm
 .ev
 .rm |c
 ..
@@ -1025,10 +1075,14 @@
 .in +\\n(qiu
 .xl -\\n(qiu
 .sz \\n(qp
+.if \\n(?n \
+.	nm \\n(ln
 ..
 .
 .de )q			\" *** end block quote
 .br
+.if \\n(?n \
+.	nm
 .ev
 .sp \\n(qsu+\\n(.Lv-1v
 .nr ?k 0
@@ -1039,11 +1093,15 @@
 .sp \\n(bsu
 .@D 3 \\$1 \\$2
 .@M
+.if \\n(?n \
+.	nm \\n(ln
 .if '\*(.T'html' .sp \\n(bsu
 ..
 .
 .de )l			\" *** end list
 .br
+.if \\n(?n \
+.	nm
 .ev
 .sp \\n(bsu+\\n(.Lv-1v
 .nr ?k 0
@@ -1102,7 +1160,7 @@
 .de @q			\" --- equation output
 .nr _Q \\n(dnu
 .ev
-.sp \\n(esu			\" output rest of preceeding text
+.sp \\n(esu			\" output rest of preceding text
 .if !"\\n(.z"" \!.ne \\n(_Qu
 .ne \\n(_Qu+\n(.Vu		\" keep it on one page
 .@C 2\"				\" .ev 2 may be jumbled from header
@@ -1123,7 +1181,11 @@
 .	tl """\\*(|p"
 .	rt \\n(_qu
 .\}
+.if \\n(?n \
+.	nm \\n(ln
 .|e
+.if \\n(?n \
+.	nm
 .sp |\\n(_qu+\\n(_Qu
 .sp \\n(esu+\\n(.Lv-1v
 .rr _q
@@ -1157,12 +1219,14 @@
 .de TH			\" *** end header part of table
 .nr T. 0
 .T# 0
+.if \\n(?n \!.nm
 .di
 .nr _T \\n(?T
 .nr ?T 0
 .ne \\n(dnu+1v
 .nr ?T \\n(_T
 .nr _i \\n(.i
+.if \\n(?n .nm \\n(ln
 .in 0
 .|h\"				\" put in the initial header
 .in \\n(_iu
@@ -1189,117 +1253,7 @@
 .\"
 .\"	REFER
 .\"
-.de ][				\" *** refer output
-.if \\$1>5 .tm Bad arg to []
-.[\\$1
-..
-.
-.de [0				\" --- other
-.(f
-.ip "\\*([F.\0"
-.if !"\\*([A"" \\*([A,
-.if !"\\*([T"" \\f2\\*([T\\f1\c
-.if !"\\*([T"" .if !"\\*([O"" ,\ \"
-.ie !"\\*([O"" \\*([O
-.el .if !"\\*([T"" \&.
-.if !"\\*([D"" \\*([D.
-.@p
-.)f
-..
-.
-.de [1				\" --- journal article
-.(f
-.ip "\\*([F.\0"
-\\*([A,
-.if !"\\*([T"" \\*(lq\\*([T,\\*(rq
-.if "\\*([V"" \\f2\\*([J\\f1,
-.if !"\\*([V"" \\f2\\*([J\\f1
-.if !"\\*([V"" \\f3\\*([V\\f1\c
-.if !"\\*([N"" (\\*([N)\c
-.if !"\\*([P"" \
-\{\
-.	ie \\n([P>0 \ pp.\&
-.	el \ p.\&
-\\*([P
-.\}
-.if !"\\*([I"" .if "\\*([R"" \\*([I,
-(\\*([D).
-.if !"\\*([O"" \\*([O
-.)f
-..
-.
-.de [2				\" --- book
-.(f
-.ip "\\*([F.\0"
-\\*([A, \\f2\\*([T,\\f1
-\\*([I\c
-.if !"\\*([C"" , \\*([C\c
- (\\*([D).
-.if !"\\*([G"" Gov't. ordering no. \\*([G
-.if !"\\*([O"" \\*([O
-.)f
-..
-.
-.de [3				\" --- article in book
-.(f
-.ip "\\*([F.\0"
-\\*([A, \\*(lq\\*([T,\\*(rq
-.if !"\\*([P"" pp. \\*([P
-in \\f2\\*([B\\f1, \c
-.if !"\\*([E"" ed. \\*([E, \c
-.if !"\\*([I"" \\*([I\c
-.if !"\\*([C"" , \\*([C\c
- (\\*([D).
-.if !"\\*([O"" \\*([O
-.)f
-..
-.
-.de [4				\" --- report
-.(f
-.ip "\\*([F.\0"
-\\*([A, \\*(lq\\*([T,\\*(rq
-\\*([R\c
-.if !"\\*([G"" \& (\\*([G)\c
-.if !"\\*([I"" , \\*([I\c
-.if !"\\*([C"" , \\*([C\c
- (\\*([D).
-.if !"\\*([O"" \\*([O
-.)f
-..
-.
-.de [5				\" --- tm style
-.(f
-.ip "\\*([F.\0"
-\\*([A, \\f2\\*([T\\f1,
-.ie \\n(TN \\*([M.
-.el Bell Laboratories internal memorandum (\\*([D).
-.)f
-..
-.
-.de ]<
-.$p References
-.lp
-.rm (f )f
-..
-.
-.de ]>
-.sp
-..
-.
-.de ]-
-.rm [V [P [A [T [N [C [B [O [R [I [E [D
-..
-.
-.ie \n(.V<1v \
-\{\
-.	ds [. \s-2\v'-.4m'\f1
-.	ds .] \v'.4m'\s+2\fP
-.\}
-.el \
-\{\
-.	ds [. " [
-.	ds .] ]
-.\}
+.mso refer-me.tmac
 .
 .\"
 .\"	IDEAL
@@ -1330,9 +1284,41 @@ in \\f2\\*([B\\f1, \c
 .ne \\$1u
 .nr g7 \\n(.u
 .ls 1
+.if \\n(?n \
+\{\
+.	de PS_nm_check &&        \" define macro to emit .nm at top diversion
+.	if \n@>4 .tm -- PS: \\\\$1 \\\\$2 .z=\\\\n(.z PS_nm_cnt=\\\\n[PS_nm_cnt]
+.	\"                       \" multiple .PS/.PE in a keep.
+.	if `\\\\$2`init` \
+.		do nr PS_nm_cnt \\\\n[PS_nm_cnt]+1
+.	ie `\\\\n(.z`` \
+\{\
+.		if `\\\\$1`suspend` \
+.			nm
+.		if `\\\\$1`resume` \
+\{\
+.			nm \\\\n(ln
+.			do nr PS_nm_cnt \\\\n[PS_nm_cnt]-1
+.			do if !\\\\n[PS_nm_cnt] \
+\{\
+.				do rm PS_nm_check
+.				do rr PS_nm_cnt
+.\}
+.\}
+.\}
+.el \!.PS_nm_check \\\\$1
+.&&
+.	mk _q                    \" emit a single numbered line for PS picture
+.	rs
+\&\ 
+.	br
+.	rt \\n(_qu
+.	PS_nm_check suspend init
+.\}
 ..
 .
 .de PE			\" *** end picture
+.if \\n(?n .PS_nm_check resume
 .ls
 .in
 .if \\n(g7 .fi
@@ -1490,6 +1476,7 @@ in \\f2\\*([B\\f1, \c
 .	nr _D \\n(dn
 .	nr _0 1v+\\n(nlu
 .	ev 2
+.	nm
 .	da |f
 .	in 0
 .	xl \\n($lu-\\n(fuu
@@ -1530,6 +1517,7 @@ in \\f2\\*([B\\f1, \c
 .el \
 \{\
 .	ev 2
+.	nm
 .	in 0
 .	xl \\n($lu-\\n(fuu
 .	@F \\n(ff

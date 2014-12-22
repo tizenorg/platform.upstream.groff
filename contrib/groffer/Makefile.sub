@@ -2,11 +2,12 @@
 
 # File position: <groff-source>/contrib/groffer/Makefile.sub
 
-# Copyright (C) 2001, 2002, 2005, 2006, 2009
+# Copyright (C) 2001, 2002, 2005, 2006, 2009, 2011
 #   Free Software Foundation, Inc.
-# Written by Werner Lemberg <wl@gnu.org> and Bernd Warken.
+# Written by Werner Lemberg <wl@gnu.org> and
+# Bernd Warken <groff-bernd.warken-72@web.de>.
 
-# Last update: 5 Jan 2009
+# Last update: 17 Oct 2011
 
 # This file is part of `groffer' which is part of `groff'.
 
@@ -63,8 +64,6 @@ GROFFER_REST=$(srcdir)/roff2.man \
 GROFFER_PERL_=`echo $(GROFFER_PERL) | sed 's|$(srcdir)/perl/||g'`
 GROFFER_SHELL_=`echo $(GROFFER_SHELL) | sed 's|$(srcdir)/shell||g'`
 
-groffer_dir=$(libdir)/groff/groffer
-
 # TODO: Add perl check to configure script.
 groffer: $(GROFFER_PERL) $(GROFFER_SHELL) \
          $(GROFFER_REST) $(SH_DEPS_SED_SCRIPT)
@@ -75,12 +74,13 @@ groffer: $(GROFFER_PERL) $(GROFFER_SHELL) \
             -e "s|@g@|$(g)|g" \
 	    -e "s|@BINDIR@|$(DESTDIR)$(bindir)|g" \
 	    -e "s|@libdir@|$(DESTDIR)$(libdir)|g" \
+	    -e "s|@groffer_dir@|$(DESTDIR)$(groffer_dir)|g" \
 	    -e "s|@VERSION@|$(version)$(revision)|g" \
 	    -e "$(SH_SCRIPT_SED_CMD)" \
 	    $(srcdir)/perl/groffer.pl >$@; \
-	  $(INSTALL_DATA) $(srcdir)/perl/groffer.man groffer.man; \
+	  cp $(srcdir)/perl/groffer.man groffer.man; \
 	  for f in $(ROFF2PROGS); do \
-	    $(INSTALL_SCRIPT) $(srcdir)/perl/roff2.pl $$f; \
+	    cp $(srcdir)/perl/roff2.pl $$f; \
 	  done; \
 	else \
 	  : >HAVE_SHELL; \
@@ -89,12 +89,13 @@ groffer: $(GROFFER_PERL) $(GROFFER_SHELL) \
             -e "s|@g@|$(g)|g" \
 	    -e "s|@BINDIR@|$(DESTDIR)$(bindir)|g" \
 	    -e "s|@libdir@|$(DESTDIR)$(libdir)|g" \
+	    -e "s|@groffer_dir@|$(DESTDIR)$(groffer_dir)|g" \
 	    -e "s|@VERSION@|$(version)$(revision)|g" \
 	    -e "$(SH_SCRIPT_SED_CMD)" \
             $(srcdir)/shell/groffer.sh >$@; \
-	  $(INSTALL_DATA) $(srcdir)/shell/groffer.man groffer.man; \
+	  cp $(srcdir)/shell/groffer.man groffer.man; \
 	  for f in $(ROFF2PROGS); do \
-	    $(INSTALL_SCRIPT) $(srcdir)/shell/roff2.sh $$f; \
+	    cp $(srcdir)/shell/roff2.sh $$f; \
 	  done; \
 	fi
 	chmod +x $@

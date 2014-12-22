@@ -1,5 +1,5 @@
 .ig
-Copyright (C) 2005, 2006, 2008, 2009, 2010
+Copyright (C) 2005, 2006, 2008, 2009, 2010, 2013
   Free Software Foundation, Inc.
 
 Written by Joachim Walsdorff <Joachim.Walsdorff@urz.uni-heidelberg.de>
@@ -202,28 +202,108 @@ will be easily converted to HTML; this is not implemented yet.
 .
 .SH USAGE
 .
-The simplest well-formed table consists of just single calls to the four
-base table macros in the right order.
+In this and the next section, we present examples to help users
+understand the basic workflow of
+.BR hdtbl .
+.
+First of all, you must load the 
+.I hdtbl.tmac
+file.
+.
+As with nearly all other groff macro packages, there are two possibilities
+to do so:
+.
+Either add the line
+.
+.PP
+.nf
+.nh
+.RS
+.CR .mso hdtbl.tmac
+.fi
+.hy
+.RE
+.
+.PP
+to your
+.I roff
+file before using any macros of the
+.B hdtbl
+package, or add the option
+.
+.PP
+.nf
+.nh
+.RS
+.CR -m hdtbl
+.fi
+.hy
+.RE
+.
+.PP
+to the command line of groff (before the document file which contains
+.B hdtbl
+macros).
+.
+Then you can include on or more tables in your document, where each one
+must be started and ended with the
+.CR .TBL
+and
+.CR .ETB
+macros, respectively.
+.
+.PP
+In this man page, we approximate the result of each example in the
+.I tty
+format to be as generic as possible since
+.B hdtbl
+currently only supports the PS and PDF output devices.
+.
+.PP
+The simplest well-formed table consists of just single calls to the
+four base table macros in the right order.
 .
 Here we construct a table with only one cell.
 .
 .PP
 .RS
 .nf
+.nh
 .CR .TBL
 .CR .TR
 .CR .TD
 .CI contents of the table cell
 .CR .ETB
 .fi
+.hy
 .RE
+.
+.PP
+A
+.I tty
+representation is
+.
+.PP
+.nf
+.nh
+.RS
++------------------------------------------------------+
+| contents-of-the-table-cell                           |
++------------------------------------------------------+
+.RE
+.hy
+.fi
 .
 .PP
 Equivalent to the above is the following notation.
 .
 .PP
 .RS
-.CRI ".TBL .TR .TD " "contents of the table cell" " .ETB"
+.nh
+.nf
+.CRI ".TBL .TR .TD \[dq]" "contents of the table cell" "\[dq] .ETB"
+.fi
+.hy
 .RE
 .
 .PP
@@ -244,12 +324,32 @@ be written as
 .PP
 .RS
 .nf
+.nh
 .CR ".TBL cols=2"
 .CR ".  TR .TD 1*1 .TD 1*2"
 .CR ".  TR .TD 2*1 .TD 2*2"
 .CR ".ETB"
 .fi
+.hy
 .RE
+.
+.PP
+A
+.I tty
+representation is
+.
+.PP
+.nf
+.nh
+.RS
++--------------------------+---------------------------+
+| 1*1                      | 1*2                       |
++--------------------------+---------------------------+
+| 2*1                      | 2*2                       |
++--------------------------+---------------------------+
+.RE
+.hy
+.fi
 .
 .PP
 Here we see a difference to HTML tables: The number of columns must be
@@ -275,6 +375,7 @@ Note, however, that this table
 .PP
 .RS
 .nf
+.nh
 .CR ".TBL"
 .CR ".  TR"
 .CR ".    TD"
@@ -290,6 +391,7 @@ Note, however, that this table
 .CR ".      ETB"
 .CR ".ETB"
 .fi
+.hy
 .RE
 .
 .PP
@@ -298,6 +400,7 @@ and this table
 .PP
 .RS
 .nf
+.nh
 .CR ".TBL cols=2"
 .CR ".  TR"
 .CR ".    TD colspan=2"
@@ -309,10 +412,47 @@ and this table
 .CR ".      nop 2*2"
 .CR ".ETB"
 .fi
+.hy
 .RE
 .
 .PP
-are similar but not identical.
+are similar but not identical (the use of
+.CR .nop
+is purely cosmetic to get proper indentation).
+.
+.PP
+The first table looks like
+.
+.PP
+.nf
+.nh
+.RS
++------------------------------------------------------+
+| 1*1 1*2                                              |
++------------------------------------------------------+
+|                                                      |
+| 2*1                         2*2                      |
+|                                                      |
++------------------------------------------------------+
+.RE
+.hy
+.fi
+.
+.PP
+and the second one like
+.
+.PP
+.nf
+.nh
+.RS
++------------------------------------------------------+
+| 1*1 1*2                                              |
++---------------------------+--------------------------+
+| 2*1                       | 2*2                      |
++---------------------------+--------------------------+
+.RE
+.hy
+.fi
 .
 .PP
 Here the latter table in a more compact form.
@@ -320,14 +460,17 @@ Here the latter table in a more compact form.
 .PP
 .RS
 .nf
+.nh
 .CR ".TBL cols=2 .TR \[dq].TD colspan=2\[dq] 1*1 1*2"
 .CR ".            TR .TD 2*1 .TD 2*2 .ETB"
 .fi
+.hy
 .RE
 .
 .PP
-If a macro has one or more arguments, and it is not starting a line, it must
-be enclosed in double quotes.
+If a macro has one or more arguments (see below), and it is not starting a
+line, everything belonging to this macro including the macro itself must be
+enclosed in double quotes.
 .
 .
 .SH MACROS AND ARGUMENTS
@@ -625,11 +768,89 @@ and causes incorrect results.
 .
 .RS
 .IP
+.nh
 .nf
 .CR ".TR .TD 1*1 \[dq].TD 1*2 rowspan=2\[dq] .TD 1*3"
 .CR ".TR \[dq].TD 2*1 colspan=2\[dq]         .TD 2*3"
 .fi
+.hy
 .RE
+.
+.PP
+A working example for headers and cells with
+.B colspan
+is
+.
+.PP
+.RS
+.nf
+.nh
+.CR .TBL cols=3
+.CR ".  TR" \[dq].TH colspan=2\[dq] header1+2 .TH header3
+.CR ".  TR" .TD 1*1 .TD 1*2 .TD 1*3
+.CR ".  TR" .TD 2*1 \[dq].TD colspan=2\[dq] 2*2+3
+.CR .ETB
+.fi
+.hy
+.RE
+.
+.PP
+This looks like
+.
+.PP
+.RS
+.nf
+.nh
++------------------------------+---------------+
+|          header1+2           |    header3    |
++--------------+---------------+---------------+
+| 1*1          | 1*2           | 1*3           |
++--------------+---------------+---------------+
+| 2*1          | 2*2+3                         |
++--------------+-------------------------------+
+.RE
+.hy
+.fi
+.
+.PP
+A working example with
+.B rowspan
+is
+.
+.PP
+.RS
+.nf
+.nh
+.CR .TBL cols=3
+.CR ".  TR"
+.CR ".  TD" 1*1
+.CR ".  TD" rowspan=2 1+2*2
+.CR ".  TD" 1*3
+.CR .
+.CR ".  TR"
+.CR ".  TD" 2*1
+.CR ".  TD" 2*3
+.CR .ETB
+.fi
+.hy
+.RE
+.
+.PP
+which looks like
+.
+.PP
+.RS
+.nf
+.nh
++--------------+---------------+---------------+
+| 1*1          | 1+2*2         | 1*3           |
++--------------+               +---------------+
+| 2*1          |               | 2*3           |
++--------------+---------------+---------------+
+.hy
+.fi
+.RE
+.
 .RE
 .RE
 .
@@ -956,10 +1177,12 @@ For example:
 .PP
 .RS
 .nf
+.nh
 .CR ".am pg@end-text"
 .CR ".  t*EM"
 .CR ".."
 .fi
+.hy
 .RE
 .
 .PP

@@ -3,12 +3,11 @@
 .ds RE \\$2
 ..
 .\"
-.\" $Id: m.tmac,v 2.43 2010/06/24 10:45:57 wl Exp $
-.@revision $Revision: 2.43 $
+.\" $Id: m.tmac,v 2.53 2012/11/17 17:36:56 ant_222 Exp $
+.@revision $Revision: 2.53 $
 .ig
 
-Copyright (C) 1991-2000, 2001, 2002, 2003, 2004, 2005, 2006, 2009,
-              2010
+Copyright (C) 1991-2006, 2009-2011
   Free Software Foundation, Inc.
 mgm is written by Jörgen Hägg <jh@axis.com>
 
@@ -140,6 +139,8 @@ Index		array!index
 .nr Pt 0
 .\"	Reference title
 .ds Rp REFERENCES
+.\"	Reference page eject status
+.nr Rpe 0
 .\"	Display indent
 .nr Si 5
 .\"
@@ -689,7 +690,7 @@ in=\\n[.i] fi=\\n[.u] .d=\\n[.d] nl=\\n[nl] pg=\\n[%]
 .rd \\$1\t
 .br
 .di
-.ie !''\\$3' \{\
+.if !''\\$3' \{\
 .	di misc*rd2
 .	ds \\$3 "\\*[misc*rd]
 .	br
@@ -737,6 +738,22 @@ in=\\n[.i] fi=\\n[.u] .d=\\n[.d] nl=\\n[nl] pg=\\n[%]
 .if (0\\n[misc*verb]%32)/16 .in
 .ev
 .nr @verbose-flag 0
+..
+.\" Wrapper to cancel the side effect of .tag + .br generating
+.\" unwanted vertical space.
+.de misc@tag
+.\" retain temporary indentation
+.if !(\\n[.in]-\\n[.i]=0) .nr misc*ti \\n[.in]
+.vpt 0
+.DEVTAG-\\$1 \\$2
+.br
+.if r misc*ti \{
+.	ti \\n[misc*ti]u
+.	rr misc*ti
+.	sp -1
+.\}
+.sp -1
+.vpt 1
 ..
 .\" ######## module pict #################
 .nr pict*width 0
@@ -986,6 +1003,7 @@ in=\\n[.i] fi=\\n[.u] .d=\\n[.d] nl=\\n[nl] pg=\\n[%]
 .\" special case, no dot after level one heading if not H1dot true
 .if (\\n[hd*level]=1)&(\\n[H1dot]=0) .ds hd*mark \\n[H1]
 .\"
+.ds hd-mark-trimmed \\*[hd*mark]\" save hd-mark w/o spaces for references
 .as hd*mark \ \ \"			add spaces between mark and heading
 .if !\\n[hd*arg1] .ds hd*mark\"		no mark for unnumbered
 .\"
@@ -1043,7 +1061,8 @@ in=\\n[.i] fi=\\n[.u] .d=\\n[.d] nl=\\n[nl] pg=\\n[%]
 .\"---------- user macro HY ------------- 
 .\"	user macro to reset indents
 .if d HY .HY \\n[hd*level] \\n[hd*arg1] "\\$2\\$3"
-.DEVTAG-NH \\n[hd*level]              \" HTML: mark beginning of heading
+.\" HTML: mark beginning of heading
+.misc@tag NH \\n[hd*level]
 .\"-------------------------------------- 
 .nr hd*mark-size \w@\\*[hd*mark]@
 .if (\\n[hd*level]<=\\n[Hc])&\\n[hd*htype] .ce\" center if level<=Hc
@@ -1091,7 +1110,8 @@ in=\\n[.i] fi=\\n[.u] .d=\\n[.d] nl=\\n[nl] pg=\\n[%]
 .nr hd*last-pos \\n[nl]
 .nr hd*last-hsize \\n[.k]
 .nr par@ind-flag 0
-.DEVTAG-EO-H  \" HTML: end of heading
+.\" HTML: end of heading
+.misc@tag EO-H
 ..
 .\"--------
 .de HM
@@ -2053,7 +2073,8 @@ in=\\n[.i] fi=\\n[.u] .d=\\n[.d] nl=\\n[nl] pg=\\n[%]
 .\"
 .nr ds*old-ll \\n[.l]
 .nr ds*old-in \\n[.i]
-.misc@push ds-ll \\n[.l]
+.misc@push ds-in \\n[ds*old-in] \" Saving indent and line length of
+.misc@push ds-ll \\n[ds*old-ll] \" the text outside the display.
 .misc@push ds-form \\n[ds*format]
 .nr ds*i \\n[.i]
 .nr ds*ftmp \\n[.f]
@@ -2076,7 +2097,8 @@ in=\\n[.i] fi=\\n[.u] .d=\\n[.d] nl=\\n[nl] pg=\\n[%]
 .\" **********
 .nr ds*width \\n[dl]
 .nr ds*height \\n[dn]
-.misc@pop-nr ds-ll ds*old-ll
+.misc@pop-nr ds-ll ds*old-ll \" Restore indent and
+.misc@pop-nr ds-in ds*old-in \" line length
 .misc@pop-nr ds-form ds*format
 .\"
 .\" **********
@@ -2094,7 +2116,7 @@ in=\\n[.i] fi=\\n[.u] .d=\\n[.d] nl=\\n[nl] pg=\\n[%]
 .nr ds*i \\n[Lsp]
 .if r Dsp .nr ds*i \\n[Dsp]
 .\"
-.if \\n[Ds] .sp \\n[ds*i]u
+.if \\n[Ds] .SP \\n[ds*i]u \" Space before display
 .\" check if pending equation label
 .eq@check \\n[ds*need]
 'in \\n[ds*old-in]u
@@ -2107,7 +2129,7 @@ in=\\n[.i] fi=\\n[.u] .d=\\n[.d] nl=\\n[nl] pg=\\n[%]
 .\" **********
 .\"
 .ds*div!\\n[ds*snr]
-.if \\n[Ds] .sp \\n[ds*i]u
+.if \\n[Ds] .SP \\n[ds*i]u \" Space after display
 .\"
 .if \\n[ds*format]=2 'ce 0
 .if \\n[ds*format]=4 'rj 0
@@ -2783,6 +2805,7 @@ in=\\n[.i] fi=\\n[.u] .d=\\n[.d] nl=\\n[nl] pg=\\n[%]
 .nr box*ll 0
 ..
 .\"########################### module ref ############################
+.mso refer-mm.tmac
 .nr ref*nr 0 1
 .aln :R ref*nr
 .nr ref*nr-width 5n
@@ -2795,7 +2818,7 @@ in=\\n[.i] fi=\\n[.u] .d=\\n[.d] nl=\\n[nl] pg=\\n[%]
 .if !''\\$1' .ds \\$1 \v'-.4m'\s-3[\\n[ref*nr]]\s0\v'.4m'
 .nr ref*flag 1
 .am ref*mac
-.ref@start-print \\n[ref*nr]
+.ref@start-print \\n[ref*nr].
 \\..
 .eo
 .am ref*mac RF
@@ -2811,8 +2834,8 @@ in=\\n[.i] fi=\\n[.u] .d=\\n[.d] nl=\\n[nl] pg=\\n[%]
 .de ref@start-print
 .di ref*div
 .in \\n[ref*nr-width]u
-.ti -(\w@\\$1.@u+1n)
-\\$1.
+.ti -(\w@\\$1@u+1n)
+\\$1
 .sp -1
 ..
 .de ref@stop-print
@@ -2829,7 +2852,8 @@ in=\\n[.i] fi=\\n[.u] .d=\\n[.d] nl=\\n[nl] pg=\\n[%]
 .\"-----------
 .de RP
 .if !d ref*mac .@error "RP: No references!"
-.nr ref*i 0\\$2
+.ie !''\\$2' .nr ref*i 0\\$2
+.el .nr ref*i \\n[Rpe]
 .if \\n[ref*i]<2 .SK
 .SP 2
 .ref@print-refs
@@ -3100,14 +3124,14 @@ in=\\n[.i] fi=\\n[.u] .d=\\n[.d] nl=\\n[nl] pg=\\n[%]
 .if !r qrf*pass .tm "SETR: No .INITR in this file"
 .if \\n[Ref] \{\
 .	ds qrf*name qrf*ref-\\$1
-.	if \\n[D]>2 .tm SETR: ref \\*[qrf*name]=\\*[hd*mark],\\n[%]
+.	if \\n[D]>2 .tm SETR: ref \\*[qrf*name]=\\*[hd-mark-trimmed],\\n[%]
 .	\" heading-number
-.	ds \\*[qrf*name]-hn \\*[hd*mark]
+.	ds \\*[qrf*name]-hn \\*[hd-mark-trimmed]
 .	\" page-number
 .	ds \\*[qrf*name]-pn \\n[%]
 .	\"
 .	if \\n[Ref] \{\
-.		tm .ds \\*[qrf*name]-hn \\*[hd*mark]
+.		tm .ds \\*[qrf*name]-hn \\*[hd-mark-trimmed]
 .		tm .ds \\*[qrf*name]-pn \\n[%]
 .		if !'\\$2'' .tm .ds \\*[qrf*name]-xx \\$2
 .	\}

@@ -39,8 +39,12 @@ Home of Groff (GNU Troff).
 .
 .HTML-IMAGE-LEFT
 .PSPIC -L gnu.eps 2i 2i
-.ie r ps4html \
+.ie r ps4html \{\
+.  ll 10i
+.  br
 .  nop \v'-0.66i'\h'2.0i'\s[80]\*[GNU] Troff\s0
+.  ll
+.\}
 .el \
 .  nop \v'-0.66i'\h'2.0i'\s[60]\*[GNU] Troff\s0
 .HTML-IMAGE-END
@@ -111,10 +115,10 @@ README
 This is the GNU groff document formatting system.
 The version number is given in the file VERSION.
 
-Included in this release are implementations of troff, pic, eqn, tbl,
-grn, refer, \-man, \-mdoc, \-mom, and \-ms macros, and drivers for
-PostScript, TeX dvi format, HP LaserJet\~4 printers, Canon CAPSL printers,
-HTML and XHTML formats (beta status), and typewriter-like devices.
+Included in this release are implementations of troff, pic, eqn, tbl, grn,
+refer, \-man, \-mdoc, \-mom, and \-ms macros, and drivers for PostScript,
+PDF, TeX DVI format, HP LaserJet\~4 printers, Canon CAPSL printers, HTML and
+XHTML formats (beta status), and typewriter-like devices.
 Also included is a modified version of the Berkeley \-me macros, the enhanced
 version gxditview of the X11 xditview previewer, and an implementation of the
 \-mm macros contributed by
@@ -179,7 +183,7 @@ The complete groff source as a single file is available
 .URL http://\:groff.ffii.org/\:groff/\:devel/\:groff-current.tar.gz here .
 
 A diff file relative to groff-\[la]version\[ra], the latest official groff
-release is available at
+release, is available at
 
 .in 2m
 .ft C
@@ -231,6 +235,9 @@ HTML output; the netpbm and psutils packages are required only for HTML
 output.
 If you don't intend to produce output in either of these formats, then
 these packages are unnecessary.
+
+Additionally, producing `PDF' output directly with the `gropdf' device
+needs a working installation of Perl.
 
 In Linux Debian, the installation of texinfo is dangerous, for it creates a
 file install-info that blocks the system installation.
@@ -289,6 +296,123 @@ Alternatively, you may subscribe by visiting the web pages at
 
 Each of these web pages also provides a link to a browseable archive of
 postings to the corresponding mailing list.
+.
+.
+.SH
+NEWS VERSION 1.22.2
+.LP
+.SH 2
+tbl
+
+.ULS
+.LI
+The character `#' can now be used as an eqn delimiter within tables.
+.ULE
+.
+.
+.SH 2
+eqn
+
+.ULS
+.LI
+A GNU extension
+
+.in 2m
+.nf
+.ft C
+delim on
+.ft P
+.fi
+.in
+
+has been added to reactivate delimiters which have been disabled with
+`delim off'.
+.ULE
+.
+.
+.SH
+NEWS VERSION 1.22.1
+.LP
+(There was no release 1.22.)
+.LP
+.SH 2
+groff
+
+.ULS
+.LI
+A new option `\-j' has been added to call the `chem' preprocessor.
+.ULE
+.
+.
+.SH 2
+tbl
+
+.ULS
+.LI
+Improved line numbering support.
+.ULE
+.
+.
+.SH 2
+macro packages
+
+.ULS
+.LI
+Support for the `refer' preprocessor has been added to the \-mm macro
+package.
+
+.LI
+In \-me, the `TH' macro was changed for compatibility with line number
+support in tables.
+
+`bl' now works inside of blocks.
+
+The behaviour of centered blocks has been improved.
+
+Line numbering support has been improved.
+
+.LI
+The \-mom macro package has reached version 2.0, focusing on PDF output
+with gropdf (using the new `pdfmom' wrapper script).
+See the file `version-2.html' of the \-mom documentation for a list of the
+many changes.
+
+.LI
+Some generic Unicode fallback characters (mainly Roman numerals) have been
+added.
+.ULE
+.
+.
+.SH 2
+tbl
+
+.ULS
+.LI
+Added numbered line support in tables.
+.ULE
+.
+.
+.SH 2
+gropdf
+
+.ULS
+.LI
+A new driver for generating PDF output directly, contributed by
+.MTO deri@chuzzlewit.myzen.co.uk "Deri James" .
+
+Note that this driver is written in Perl, thus you need a working Perl
+installation to run this output device.
+.ULE
+.
+.
+.SH 2
+pdfmom
+
+.ULS
+.LI
+A new wrapper around groff that facilitates the production of PDF documents
+from files formatted with the \-mom macros.
+.ULE
 .
 .
 .SH
@@ -685,7 +809,7 @@ Here the same table using a more expanded syntax:
 Tables can be nested; `hdtbl' works without a preprocessor so that the
 full capability of groff's macro engine is available.
 
-This package currently works with `-Tps' only.
+This package currently works with `\-Tps' only.
 
 .LI
 \-mandoc now supports multiple man pages (in either man or mdoc format).
@@ -2131,7 +2255,7 @@ Groffer
 .ULS
 .LI
 A new script contributed by
-.MTO bwarken@mayn.de "Bernd Warken" .
+.MTO groff-bernd.warken-72@web.de "Bernd Warken" .
 It displays groff files and man pages on X and tty, taking care of most
 parameters automatically.
 .ULE

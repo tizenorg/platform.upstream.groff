@@ -1,6 +1,5 @@
 # Autoconf configuration file for groff.
-# Copyright (C) 1989-1995, 2001, 2002, 2003, 2004, 2005, 2006, 2007,
-#               2009
+# Copyright (C) 1989-1995, 2001-2007, 2009, 2011-2012
 # Free Software Foundation, Inc.
 #
 # This file is part of groff.
@@ -59,6 +58,8 @@ GROFF_OS390
 GROFF_X11
 GROFF_APPRESDIR_OPTION
 GROFF_APPRESDIR_DEFAULT
+GROFF_GROFFERDIR_OPTION
+GROFF_GROFFERDIR_DEFAULT
 GROFF_PRINT
 AC_PROG_EGREP
 AC_PATH_PROG([PERLPATH], [perl], [/usr/bin/perl])
@@ -114,7 +115,10 @@ AC_C_BIGENDIAN
 # checks for libraries
 GROFF_LIBC
 GROFF_LIBM
+
+AC_LANG_PUSH([C++])
 AM_ICONV
+AC_LANG_POP([C++])
 
 # we need LIBEXT
 AC_SUBST([LIBEXT],[$acl_libext])
@@ -150,6 +154,7 @@ GROFF_HTML_PROGRAMS
 GROFF_PDFDOC_PROGRAMS
 GROFF_PNMTOPS_NOSETPAGE
 gl_GLIBC21
+gl_LOCALCHARSET
 
 AC_CONFIG_FILES([stamp-h], [echo timestamp > stamp-h])
 AC_CONFIG_FILES([Makefile doc/Makefile src/utils/xtotroff/Makefile])

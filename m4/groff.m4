@@ -1,5 +1,5 @@
 # Autoconf macros for groff.
-# Copyright (C) 1989-1995, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2009
+# Copyright (C) 1989-1995, 2001-2007, 2009, 2011
 # Free Software Foundation, Inc.
 #
 # This file is part of groff.
@@ -1193,3 +1193,19 @@ AC_DEFUN([GROFF_APPRESDIR_CHECK],
        ])
      fi
    fi])
+
+
+# Set up the `--with-grofferdir' command line option.
+
+AC_DEFUN([GROFF_GROFFERDIR_OPTION],
+  [AC_ARG_WITH([grofferdir],
+     AS_HELP_STRING([--with-grofferdir=DIR],
+		    [groffer files location]))])
+
+AC_DEFUN([GROFF_GROFFERDIR_DEFAULT],
+  [if test "x$with_grofferdir" = "x"; then
+    groffer_dir=$libdir/groff/groffer
+  else
+    groffer_dir=$with_grofferdir
+  fi
+  AC_SUBST([groffer_dir])])

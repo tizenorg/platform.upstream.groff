@@ -1,3 +1,52 @@
+* Fri Jan 4 2012
+
+o Makefile.sub (install_data): Create directory for PDF documentation.
+  This is necesssary in case GhostScript is not available, and no other
+  PDF files have been created yet.
+
+* Sun Dec 30 2012
+
+o Makefile.sub (install_data): Fix symlink.
+  Patch from Elias Pipping <pipping@lavabit.com>.
+
+* Thu Sep 20 2012
+
+o Simplify enviroment handling.
+
+* Fri Aug 31 2012
+
+o Version 2.0 release.  Changes documented in version-2.html in
+  the html documentation.
+
+o Added new documentation, Producing PDFs with groff and mom.
+
+* Sat Feb 18 2012
+
+o Added choice to have DOCTYPE NAMED <name> underscored or not when
+  PRINTSTYLE TYPEWRITE
+
+o Doc fix to DOCTYPE NAMED underlining entry
+
+* Thu Sep 8 2011
+o Added register #SUBHEAD, analagous to #HEAD, to fix excessive
+  spacing between SUBHEADs and SUBSUBHEADs.
+
+* Sun Feb 20 2011
+
+o Added support for sub-subheads from patch supplied by Petr Man.
+
+* Fri Feb 11 2011
+
+o Moved register #UNADJUSTED_DOC_LEAD to top of TRAPS macro.
+
+* Fri Nov 19 2010
+
+o Added utility macro, SINGE_SPACE, for PRINTSTYLE TYPEWRITE
+
+* Sat Jan 22 2011
+
+o groff_mom.man (FILES): Fix directory locations.
+
 * Sun Oct 3 2010
 
 o Complete overhaul of refer macros and documentation
@@ -1368,7 +1417,7 @@ o Added "Next," "Prev" and "Top" links to top and bottom of doc files.
 o Fixed some typos in the docs.
 
 
-Copyright 2004, 2005, 2006, 2007, 2008, 2009
+Copyright 2004-2012
   Free Software Foundation, Inc.
 
 Copying and distribution of this file, with or without modification,

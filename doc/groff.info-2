@@ -1,10 +1,9 @@
 This is groff.info, produced by makeinfo version 4.13 from
 ./groff.texinfo.
 
-This manual documents GNU `troff' version 1.21.
+This manual documents GNU `troff' version 1.22.2.
 
-   Copyright (C) 1994-2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,
-2008, 2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 1994-2013 Free Software Foundation, Inc.
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -33,14 +32,19 @@ A "macro" is a collection of text and embedded commands which can be
 invoked multiple times.  Use macros to define common operations.  *Note
 Strings::, for a (limited) alternative syntax to call macros.
 
+   Although the following requests can be used to create macros, simply
+using an undefined macro will cause it to be defined as empty.  *Note
+Identifiers::.
+
  -- Request: .de name [end]
  -- Request: .de1 name [end]
  -- Request: .dei name [end]
  -- Request: .dei1 name [end]
      Define a new macro named NAME.  `gtroff' copies subsequent lines
      (starting with the next one) into an internal buffer until it
-     encounters the line `..' (two dots).  The optional second argument
-     to `de' changes this to a macro to `.END'.
+     encounters the line `..' (two dots).  If the optional second
+     argument to `de' is present it is used as the macro closure
+     request instead of `..'.
 
      There can be whitespace after the first dot in the line containing
      the ending token (either `.' or macro `END').  Don't insert a tab
@@ -1226,6 +1230,33 @@ File: groff.info,  Node: End-of-input Traps,  Prev: Leading Spaces Traps,  Up: T
      page break caused by the end macro; further page breaks emitted by
      the end macro are handled normally.
 
+     Another possible use of the `em' request is to make `gtroff' emit
+     a single large page instead of multiple pages.  For example, one
+     may want to produce a long plain-text file for reading on-screen.
+     The idea is to set the page length at the beginning of the
+     document to a very large value to hold all the text, and
+     automatically adjust it to the exact height of the document after
+     the text has been output.
+
+
+          .de adjust-page-length
+          .  br
+          .  pl \\n[nl]u   \" \n[nl] holds the current page length
+          ..
+          .
+          .de single-page-mode
+          .  pl 99999
+          .  em adjust-page-length
+          ..
+          .
+          .\" activate the above code
+          .single-page-mode
+
+     Since only one end-of-input trap does exist and other macro
+     packages may already use it, care must be taken not to break the
+     mechanism.  A simple solution would be to append the above macro
+     to the macro package's end-of-input macro using the `.am' request.
+
 
 File: groff.info,  Node: Diversions,  Next: Environments,  Prev: Traps,  Up: gtroff Reference
 
@@ -1241,6 +1272,10 @@ footnotes, tables of contents, and indices.
    For orthogonality it is said that `gtroff' is in the "top-level
 diversion" if no diversion is active (i.e., the data is diverted to the
 output device).
+
+   Although the following requests can be used to create diversions,
+simply using an undefined diversion will cause it to be defined as
+empty.  *Note Identifiers::.
 
  -- Request: .di macro
  -- Request: .da macro
@@ -1442,6 +1477,10 @@ output device).
           .tr @@
           .asciify x
           .x
+
+     Note that `asciify' cannot return all items in a diversion back to
+     their source equivalent, nodes such as `\N[...]' will still remain
+     as nodes, so the result cannot be guaranteed to be a pure string.
 
      *Note Copy-in Mode::.
 
@@ -2187,7 +2226,7 @@ categorized elsewhere in this manual.
  -- Register: \n[lly]
  -- Register: \n[urx]
  -- Register: \n[ury]
-     Retrieve the bounding box of the PostScript image found in
+     Retrieve the bounding box of the POSTSCRIPT image found in
      FILENAME.  The file must conform to Adobe's "Document Structuring
      Conventions" (DSC); the command searches for a `%%BoundingBox'
      comment and extracts the bounding box values into the number
@@ -2774,6 +2813,7 @@ which are freely available.
 * gpic::
 * ggrn::
 * grap::
+* gchem::
 * grefer::
 * gsoelim::
 * preconv::
@@ -2843,7 +2883,7 @@ File: groff.info,  Node: Invoking ggrn,  Prev: ggrn,  Up: ggrn
 ---------------------
 
 
-File: groff.info,  Node: grap,  Next: grefer,  Prev: ggrn,  Up: Preprocessors
+File: groff.info,  Node: grap,  Next: gchem,  Prev: ggrn,  Up: Preprocessors
 
 6.5 `grap'
 ==========
@@ -2854,9 +2894,25 @@ an extra package from the following address:
      `http://www.lunabase.org/~faber/Vault/software/grap/'
 
 
-File: groff.info,  Node: grefer,  Next: gsoelim,  Prev: grap,  Up: Preprocessors
+File: groff.info,  Node: gchem,  Next: grefer,  Prev: grap,  Up: Preprocessors
 
-6.6 `grefer'
+6.6 `gchem'
+===========
+
+* Menu:
+
+* Invoking gchem::
+
+
+File: groff.info,  Node: Invoking gchem,  Prev: gchem,  Up: gchem
+
+6.6.1 Invoking `gchem'
+----------------------
+
+
+File: groff.info,  Node: grefer,  Next: gsoelim,  Prev: gchem,  Up: Preprocessors
+
+6.7 `grefer'
 ============
 
 * Menu:
@@ -2866,13 +2922,13 @@ File: groff.info,  Node: grefer,  Next: gsoelim,  Prev: grap,  Up: Preprocessors
 
 File: groff.info,  Node: Invoking grefer,  Prev: grefer,  Up: grefer
 
-6.6.1 Invoking `grefer'
+6.7.1 Invoking `grefer'
 -----------------------
 
 
 File: groff.info,  Node: gsoelim,  Next: preconv,  Prev: grefer,  Up: Preprocessors
 
-6.7 `gsoelim'
+6.8 `gsoelim'
 =============
 
 * Menu:
@@ -2882,13 +2938,13 @@ File: groff.info,  Node: gsoelim,  Next: preconv,  Prev: grefer,  Up: Preprocess
 
 File: groff.info,  Node: Invoking gsoelim,  Prev: gsoelim,  Up: gsoelim
 
-6.7.1 Invoking `gsoelim'
+6.8.1 Invoking `gsoelim'
 ------------------------
 
 
 File: groff.info,  Node: preconv,  Prev: gsoelim,  Up: Preprocessors
 
-6.8 `preconv'
+6.9 `preconv'
 =============
 
 * Menu:
@@ -2898,7 +2954,7 @@ File: groff.info,  Node: preconv,  Prev: gsoelim,  Up: Preprocessors
 
 File: groff.info,  Node: Invoking preconv,  Prev: preconv,  Up: preconv
 
-6.8.1 Invoking `preconv'
+6.9.1 Invoking `preconv'
 ------------------------
 
 
@@ -2912,6 +2968,7 @@ File: groff.info,  Node: Output Devices,  Next: File formats,  Prev: Preprocesso
 * Special Characters::
 * grotty::
 * grops::
+* gropdf::
 * grodvi::
 * grolj4::
 * grolbp::
@@ -2932,6 +2989,10 @@ File: groff.info,  Node: grotty,  Next: grops,  Prev: Special Characters,  Up: O
 7.2 `grotty'
 ============
 
+The postprocessor `grotty' translates the output from GNU `troff' into
+a form suitable for typewriter-like devices.  It is fully documented on
+its manual page, `grotty(1)'.
+
 * Menu:
 
 * Invoking grotty::
@@ -2942,11 +3003,71 @@ File: groff.info,  Node: Invoking grotty,  Prev: grotty,  Up: grotty
 7.2.1 Invoking `grotty'
 -----------------------
 
+The postprocessor `grotty' accepts the following command-line options:
+
+`-b'
+     Do not overstrike bold glyphs.  Ignored if `-c' isn't used.
+
+`-B'
+     Do not underline bold-italic glyphs.  Ignored if `-c' isn't used.
+
+`-c'
+     Use overprint and disable colours for printing on legacy Teletype
+     printers (see below).
+
+`-d'
+     Do not render lines (this is, ignore all `\D' escapes).
+
+`-f'
+     Use form feed control characters in the output.
+
+`-FDIR'
+     Put the directory `DIR/devNAME' in front of the search path for
+     the font and device description files, given the target device
+     NAME.
+
+`-h'
+     Use horizontal tabs for sequences of 8 space characters.
+
+`-i'
+     Request italic glyphs from the terminal.  Ignored if `-c' is
+     active.
+
+`-o'
+     Do not overstrike.
+
+`-r'
+     Highlight italic glyphs.  Ignored if `-c' is active.
+
+`-u'
+     Do not underline italic glyphs.  Ignored if `-c' isn't used.
+
+`-U'
+     Do not overstrike bold-italic glyphs.  Ignored if `-c' isn't used.
+
+`-v'
+     Print the version number.
+
+   The `-c' mode for TTY output devices means that underlining is done
+by emitting sequences of `_' and `^H' (the backspace character) before
+the actual character.  Literally, this is printing an underline
+character, then moving the caret back one character position, and
+printing the actual character at the same position as the underline
+character (similar to a typewriter).  Usually, a modern terminal can't
+interpret this (and the original Teletype machines for which this
+sequence was appropriate are no longer in use).  You need a pager
+program like `less' which translates this into ISO 6429 SGR sequences
+to control terminals.
+
 
-File: groff.info,  Node: grops,  Next: grodvi,  Prev: grotty,  Up: Output Devices
+File: groff.info,  Node: grops,  Next: gropdf,  Prev: grotty,  Up: Output Devices
 
 7.3 `grops'
 ===========
+
+The postprocessor `grops' translates the output from GNU `troff' into a
+form suitable for Adobe POSTSCRIPT devices.  It is fully documented on
+its manual page, `grops(1)'.
 
 * Menu:
 
@@ -2959,17 +3080,162 @@ File: groff.info,  Node: Invoking grops,  Next: Embedding PostScript,  Prev: gro
 7.3.1 Invoking `grops'
 ----------------------
 
+The postprocessor `grops' accepts the following command-line options:
+
+`-bFLAGS'
+     Use backward compatibility settings given by FLAGS as documented
+     in the `grops(1)' manual page.  Overrides the command `broken' in
+     the `DESC' file.
+
+`-cN'
+     Print N copies of each page.
+
+`-FDIR'
+     Put the directory `DIR/devNAME' in front of the search path for
+     the font, prologue and device description files, given the target
+     device NAME, usually *ps*.
+
+`-g'
+     Tell the printer to guess the page length.  Useful for printing
+     vertically centered pages when the paper dimensions are determined
+     at print time.
+
+`-IPATH ...'
+     Consider the directory `PATH' for searching included files
+     specified with relative paths.  The current directory is searched
+     as fallback.
+
+`-l'
+     Use landscape orientation.
+
+`-m'
+     Use manual feed.
+
+`-pPAPERSIZE'
+     Set the page dimensions.  Overrides the commands `papersize',
+     `paperlength', and `paperwidth' in the `DESC' file.  See the
+     `groff_font(5)' manual page for details.
+
+`-PPROLOGUE'
+     Use the PROLOGUE in the font path as the prologue instead of the
+     default `prologue'.  Overrides the environment variable
+     `GROPS_PROLOGUE'.
+
+`-wN'
+     Set the line thickness to N/1000em.  Overrides the default value N
+     = 40.
+
+`-v'
+     Print the version number.
+
 
 File: groff.info,  Node: Embedding PostScript,  Prev: Invoking grops,  Up: grops
 
 7.3.2 Embedding POSTSCRIPT
 --------------------------
 
-
-File: groff.info,  Node: grodvi,  Next: grolj4,  Prev: grops,  Up: Output Devices
+The escape sequence
 
-7.4 `grodvi'
+   `\X'ps: import FILE LLX LLY URX URY   WIDTH [HEIGHT]''
+
+places a rectangle of the specified WIDTH containing the POSTSCRIPT
+drawing from file FILE bound by the box from LLX LLY to URX URY (in
+POSTSCRIPT coordinates) at the insertion point.  If HEIGHT is not
+specified, the embedded drawing is scaled proportionally.
+
+   *Note Miscellaneous::, for the `psbb' request which automatically
+generates the bounding box.
+
+   This escape sequence is used internally by the macro `PSPIC' (see
+the `groff_tmac(5)' manual page).
+
+
+File: groff.info,  Node: gropdf,  Next: grodvi,  Prev: grops,  Up: Output Devices
+
+7.4 `gropdf'
 ============
+
+The postprocessor `gropdf' translates the output from GNU `troff' into
+a form suitable for Adobe PDF devices.  It is fully documented on its
+manual page, `gropdf(1)'.
+
+* Menu:
+
+* Invoking gropdf::
+* Embedding PDF::
+
+
+File: groff.info,  Node: Invoking gropdf,  Next: Embedding PDF,  Prev: gropdf,  Up: gropdf
+
+7.4.1 Invoking `gropdf'
+-----------------------
+
+The postprocessor `gropdf' accepts the following command-line options:
+
+`-d'
+     Produce uncompressed PDFs which include debugging comments.
+
+`-e'
+     This forces `gropdf' to embed all used fonts in the PDF, even if
+     they are one of the 14 base Adobe fonts.
+
+`-FDIR'
+     Put the directory `DIR/devNAME' in front of the search path for
+     the font, prologue and device description files, given the target
+     device NAME, usually *pdf*.
+
+`-yFOUNDRY'
+     This forces the use of a different font foundry.
+
+`-l'
+     Use landscape orientation.
+
+`-pPAPERSIZE'
+     Set the page dimensions.  Overrides the commands `papersize',
+     `paperlength', and `paperwidth' in the `DESC' file.  See the
+     `groff_font(5)' manual page for details.
+
+`-v'
+     Print the version number.
+
+`-s'
+     Append a comment line to end of PDF showing statistics, i.e.
+     number of pages in document.  Ghostscript's `ps2pdf(1)' complains
+     about this line if it is included, but works anyway.
+
+`-uFILENAME'
+     `gropdf' normally includes a ToUnicode CMap with any font created
+     using `text.enc' as the encoding file, this makes it easier to
+     search for words which contain ligatures.  You can include your
+     own CMap by specifying a FILENAME or have no CMap at all by
+     omitting the FILENAME.
+
+
+File: groff.info,  Node: Embedding PDF,  Prev: Invoking gropdf,  Up: gropdf
+
+7.4.2 Embedding PDF
+-------------------
+
+The escape sequence
+
+   `\X'pdf: pdfpic FILE ALIGNMENT WIDTH [HEIGHT]   [LINELENGTH]''
+
+places a rectangle of the specified WIDTH containing the PDF drawing
+from file FILE of desired WIDTH and HEIGHT (if HEIGHT is missing or
+zero then it is scaled proportionally).  If ALIGNMENT is `-L' the
+drawing is left aligned.  If it is `-C' or `-R' a LINELENGTH greater
+than the width of the drawing is required as well.  If WIDTH is
+specified as zero then the width is scaled in proportion to the height.
+
+
+File: groff.info,  Node: grodvi,  Next: grolj4,  Prev: gropdf,  Up: Output Devices
+
+7.5 `grodvi'
+============
+
+The postprocessor `grodvi' translates the output from GNU `troff' into
+the *DVI* output format compatible with the *TeX* document preparation
+system.  It is fully documented on its manual page, `grodvi(1)'.
 
 * Menu:
 
@@ -2978,14 +3244,43 @@ File: groff.info,  Node: grodvi,  Next: grolj4,  Prev: grops,  Up: Output Device
 
 File: groff.info,  Node: Invoking grodvi,  Prev: grodvi,  Up: grodvi
 
-7.4.1 Invoking `grodvi'
+7.5.1 Invoking `grodvi'
 -----------------------
+
+The postprocessor `grodvi' accepts the following command-line options:
+
+`-d'
+     Do not use *tpic* specials to implement drawing commands.
+
+`-FDIR'
+     Put the directory `DIR/devNAME' in front of the search path for
+     the font and device description files, given the target device
+     NAME, usually *dvi*.
+
+`-l'
+     Use landscape orientation.
+
+`-pPAPERSIZE'
+     Set the page dimensions.  Overrides the commands `papersize',
+     `paperlength', and `paperwidth' in the `DESC' file.  See
+     `groff_font(5)' manual page for details.
+
+`-v'
+     Print the version number.
+
+`-wN'
+     Set the line thickness to N/1000em.  Overrides the default value N
+     = 40.
 
 
 File: groff.info,  Node: grolj4,  Next: grolbp,  Prev: grodvi,  Up: Output Devices
 
-7.5 `grolj4'
+7.6 `grolj4'
 ============
+
+The postprocessor `grolj4' translates the output from GNU `troff' into
+the *PCL5* output format suitable for printing on a *HP LaserJet 4*
+printer.  It is fully documented on its manual page, `grolj4(1)'.
 
 * Menu:
 
@@ -2994,14 +3289,45 @@ File: groff.info,  Node: grolj4,  Next: grolbp,  Prev: grodvi,  Up: Output Devic
 
 File: groff.info,  Node: Invoking grolj4,  Prev: grolj4,  Up: grolj4
 
-7.5.1 Invoking `grolj4'
+7.6.1 Invoking `grolj4'
 -----------------------
+
+The postprocessor `grolj4' accepts the following command-line options:
+
+`-cN'
+     Print N copies of each page.
+
+`-FDIR'
+     Put the directory `DIR/devNAME' in front of the search path for
+     the font and device description files, given the target device
+     NAME, usually *lj4*.
+
+`-l'
+     Use landscape orientation.
+
+`-pSIZE'
+     Set the page dimensions.  Valid values for SIZE are: `letter',
+     `legal', `executive', `a4', `com10', `monarch', `c5', `b5', `d1'.
+
+`-v'
+     Print the version number.
+
+`-wN'
+     Set the line thickness to N/1000em.  Overrides the default value N
+     = 40.
+
+   The special drawing command `\D'R DH DV'' draws a horizontal
+rectangle from the current position to the position at offset (DH,DV).
 
 
 File: groff.info,  Node: grolbp,  Next: grohtml,  Prev: grolj4,  Up: Output Devices
 
-7.6 `grolbp'
+7.7 `grolbp'
 ============
+
+The postprocessor `grolbp' translates the output from GNU `troff' into
+the *LBP* output format suitable for printing on *Canon CAPSL*
+printers.  It is fully documented on its manual page, `grolbp(1)'.
 
 * Menu:
 
@@ -3010,13 +3336,43 @@ File: groff.info,  Node: grolbp,  Next: grohtml,  Prev: grolj4,  Up: Output Devi
 
 File: groff.info,  Node: Invoking grolbp,  Prev: grolbp,  Up: grolbp
 
-7.6.1 Invoking `grolbp'
+7.7.1 Invoking `grolbp'
 -----------------------
+
+The postprocessor `grolbp' accepts the following command-line options:
+
+`-cN'
+     Print N copies of each page.
+
+`-FDIR'
+     Put the directory `DIR/devNAME' in front of the search path for
+     the font, prologue and device description files, given the target
+     device NAME, usually *lbp*.
+
+`-l'
+     Use landscape orientation.
+
+`-oORIENTATION'
+     Use the ORIENTATION specified: `portrait' or `landscape'.
+
+`-pPAPERSIZE'
+     Set the page dimensions.  See `groff_font(5)' manual page for
+     details.
+
+`-wN'
+     Set the line thickness to N/1000em.  Overrides the default value N
+     = 40.
+
+`-v'
+     Print the version number.
+
+`-h'
+     Print command-line help.
 
 
 File: groff.info,  Node: grohtml,  Next: gxditview,  Prev: grolbp,  Up: Output Devices
 
-7.7 `grohtml'
+7.8 `grohtml'
 =============
 
 The `grohtml' front end (which consists of a preprocessor,
@@ -3040,6 +3396,9 @@ ignored unless the special characters appear inside a table or
 equation, in which case glyphs for these characters must be defined for
 the `ps' device as well.
 
+   This output device is fully documented on its manual page,
+`grohtml(1)'.
+
 * Menu:
 
 * Invoking grohtml::
@@ -3048,13 +3407,86 @@ the `ps' device as well.
 
 File: groff.info,  Node: Invoking grohtml,  Next: grohtml specific registers and strings,  Prev: grohtml,  Up: grohtml
 
-7.7.1 Invoking `grohtml'
+7.8.1 Invoking `grohtml'
 ------------------------
+
+The postprocessor `grohtml' accepts the following command-line options:
+
+`-aBITS'
+     Use this number of BITS (= 1, 2 or 4) for text antialiasing.
+     Default: BITS = 4.
+
+`-a0'
+     Do not use text antialiasing.
+
+`-b'
+     Use white background.
+
+`-DDIR'
+     Store rendered images in the directory `DIR'.
+
+`-FDIR'
+     Put the directory `DIR/devNAME' in front of the search path for
+     the font, prologue and device description files, given the target
+     device NAME, usually *html*.
+
+`-gBITS'
+     Use this number of BITS (= 1, 2 or 4) for antialiasing of
+     drawings.  Default: BITS = 4.
+
+`-g0'
+     Do not use antialiasing for drawings.
+
+`-h'
+     Use the `B' element for section headings.
+
+`-iRESOLUTION'
+     Use the RESOLUTION for rendered images.  Default: RESOLUTION =
+     100dpi.
+
+`-ISTEM'
+     Set the images' STEM NAME.  Default: STEM = `grohtml-XXX' (XXX is
+     the process ID).
+
+`-jSTEM'
+     Place each section in a separate file called `STEM-N.html' (where
+     N is a generated section number).
+
+`-l'
+     Do not generate the table of contents.
+
+`-n'
+     Generate simple fragment identifiers.
+
+`-oOFFSET'
+     Use vertical paddding OFFSET for images.
+
+`-p'
+     Display the page rendering progress to `stderr'.
+
+`-r'
+     Do not use horizontal rules to separate headers and footers.
+
+`-sSIZE'
+     Set the base font size, to be modified using the elements `BIG'
+     and `SMALL'.
+
+`-SLEVEL'
+     Generate separate files for sections at level LEVEL.
+
+`-v'
+     Print the version number.
+
+`-V'
+     Generate a validator button at the bottom.
+
+`-y'
+     Generate a signature of groff after the validator button, if any.
 
 
 File: groff.info,  Node: grohtml specific registers and strings,  Prev: Invoking grohtml,  Up: grohtml
 
-7.7.2 `grohtml' specific registers and strings
+7.8.2 `grohtml' specific registers and strings
 ----------------------------------------------
 
  -- Register: \n[ps4html]
@@ -3077,7 +3509,7 @@ File: groff.info,  Node: grohtml specific registers and strings,  Prev: Invoking
 
           troff -Txhtml
 
-     The PostScript device is used to create all the image files (for
+     The POSTSCRIPT device is used to create all the image files (for
      `-Thtml'; if `-Txhtml' is used, all equations are passed to `geqn'
      to produce MathML, and the register `ps4html' enables the macro
      sets to ignore floating keeps, footers, and headings.
@@ -3088,7 +3520,7 @@ File: groff.info,  Node: grohtml specific registers and strings,  Prev: Invoking
 
 File: groff.info,  Node: gxditview,  Prev: grohtml,  Up: Output Devices
 
-7.8 `gxditview'
+7.9 `gxditview'
 ===============
 
 * Menu:
@@ -3098,7 +3530,7 @@ File: groff.info,  Node: gxditview,  Prev: grohtml,  Up: Output Devices
 
 File: groff.info,  Node: Invoking gxditview,  Prev: gxditview,  Up: gxditview
 
-7.8.1 Invoking `gxditview'
+7.9.1 Invoking `gxditview'
 --------------------------
 
 
@@ -3797,7 +4229,7 @@ High-resolution device `ps'
           x stop
 
      This output can be fed into `grops' to get its representation as a
-     PostScript file.
+     POSTSCRIPT file.
 
 Low-resolution device `latin1'
      This is similar to the high-resolution device except that the
@@ -3882,7 +4314,7 @@ specification except for the following features.
 
    * The old hardware was very different from what we use today.  So the
      `groff' devices are also fundamentally different from the ones in
-     AT&T `troff'.  For example, the AT&T PostScript device is called
+     AT&T `troff'.  For example, the AT&T POSTSCRIPT device is called
      `post' and has a resolution of only 720 units per inch, suitable
      for printers 20 years ago, while `groff''s `ps' device has a
      resolution of 72000 units per inch.  Maybe, by implementing some
@@ -3962,7 +4394,7 @@ override previous values.
 
 `image_generator STRING'
      Needed for `grohtml' only.  It specifies the program to generate
-     PNG images from PostScript input.  Under GNU/Linux this is usually
+     PNG images from POSTSCRIPT input.  Under GNU/Linux this is usually
      `gs' but under other systems (notably cygwin) it might be set to
      another name.
 
@@ -4743,37 +5175,37 @@ Requests appear without the leading control character (normally either
 * ad:                                    Manipulating Filling and Adjusting.
                                                               (line  52)
 * af:                                    Assigning Formats.   (line  12)
-* aln:                                   Setting Registers.   (line 114)
-* als:                                   Strings.             (line 237)
-* am:                                    Writing Macros.      (line 114)
-* am1:                                   Writing Macros.      (line 115)
-* ami:                                   Writing Macros.      (line 116)
-* ami1:                                  Writing Macros.      (line 117)
-* as:                                    Strings.             (line 183)
-* as1:                                   Strings.             (line 184)
-* asciify:                               Diversions.          (line 200)
+* aln:                                   Setting Registers.   (line 118)
+* als:                                   Strings.             (line 241)
+* am:                                    Writing Macros.      (line 119)
+* am1:                                   Writing Macros.      (line 120)
+* ami:                                   Writing Macros.      (line 121)
+* ami1:                                  Writing Macros.      (line 122)
+* as:                                    Strings.             (line 187)
+* as1:                                   Strings.             (line 188)
+* asciify:                               Diversions.          (line 204)
 * backtrace:                             Debugging.           (line  98)
-* bd:                                    Artificial Fonts.    (line  96)
+* bd:                                    Artificial Fonts.    (line  98)
 * blm:                                   Blank Line Traps.    (line   7)
-* box:                                   Diversions.          (line  30)
-* boxa:                                  Diversions.          (line  31)
+* box:                                   Diversions.          (line  34)
+* boxa:                                  Diversions.          (line  35)
 * bp:                                    Page Control.        (line   7)
 * br:                                    Manipulating Filling and Adjusting.
                                                               (line  12)
 * break:                                 while.               (line  73)
 * brp:                                   Manipulating Filling and Adjusting.
-                                                              (line 112)
+                                                              (line 134)
 * c2:                                    Character Translations.
                                                               (line  16)
 * cc:                                    Character Translations.
                                                               (line  10)
 * ce:                                    Manipulating Filling and Adjusting.
-                                                              (line 189)
+                                                              (line 211)
 * cf:                                    I/O.                 (line  51)
 * cflags:                                Using Symbols.       (line 242)
 * ch:                                    Page Location Traps. (line 119)
 * char:                                  Using Symbols.       (line 329)
-* chop:                                  Strings.             (line 276)
+* chop:                                  Strings.             (line 280)
 * class:                                 Character Classes.   (line  12)
 * close:                                 I/O.                 (line 241)
 * color:                                 Colors.              (line   7)
@@ -4781,23 +5213,23 @@ Requests appear without the leading control character (normally either
 * continue:                              while.               (line  77)
 * cp:                                    Implementation Differences.
                                                               (line  23)
-* cs:                                    Artificial Fonts.    (line 127)
-* cu:                                    Artificial Fonts.    (line  87)
-* da:                                    Diversions.          (line  18)
-* de:                                    Writing Macros.      (line  11)
-* de1:                                   Writing Macros.      (line  12)
+* cs:                                    Artificial Fonts.    (line 129)
+* cu:                                    Artificial Fonts.    (line  89)
+* da:                                    Diversions.          (line  22)
+* de:                                    Writing Macros.      (line  15)
+* de1:                                   Writing Macros.      (line  16)
 * defcolor:                              Colors.              (line  21)
-* dei:                                   Writing Macros.      (line  13)
-* dei1:                                  Writing Macros.      (line  14)
+* dei:                                   Writing Macros.      (line  17)
+* dei1:                                  Writing Macros.      (line  18)
 * device:                                Postprocessor Access.
                                                               (line  11)
 * devicem:                               Postprocessor Access.
                                                               (line  29)
-* di:                                    Diversions.          (line  17)
+* di:                                    Diversions.          (line  21)
 * do:                                    Implementation Differences.
                                                               (line  24)
-* ds:                                    Strings.             (line  11)
-* ds1:                                   Strings.             (line  12)
+* ds:                                    Strings.             (line  15)
+* ds1:                                   Strings.             (line  16)
 * dt:                                    Diversion Traps.     (line   7)
 * ec:                                    Character Translations.
                                                               (line  49)
@@ -4812,7 +5244,7 @@ Requests appear without the leading control character (normally either
 * ev:                                    Environments.        (line  38)
 * evc:                                   Environments.        (line  72)
 * ex:                                    Debugging.           (line  45)
-* fam:                                   Font Families.       (line  19)
+* fam:                                   Font Families.       (line  20)
 * fc:                                    Fields.              (line  18)
 * fchar:                                 Using Symbols.       (line 330)
 * fcolor:                                Colors.              (line  85)
@@ -4858,7 +5290,7 @@ Requests appear without the leading control character (normally either
 * kern:                                  Ligatures and Kerning.
                                                               (line  41)
 * lc:                                    Leaders.             (line  23)
-* length:                                Strings.             (line 217)
+* length:                                Strings.             (line 221)
 * lf:                                    Debugging.           (line  10)
 * lg:                                    Ligatures and Kerning.
                                                               (line  23)
@@ -4868,12 +5300,12 @@ Requests appear without the leading control character (normally either
                                                               (line  69)
 * lsm:                                   Leading Spaces Traps.
                                                               (line   7)
-* lt:                                    Page Layout.         (line  60)
+* lt:                                    Page Layout.         (line  64)
 * mc:                                    Miscellaneous.       (line  76)
 * mk:                                    Page Motions.        (line  10)
 * mso:                                   I/O.                 (line  41)
 * na:                                    Manipulating Filling and Adjusting.
-                                                              (line 104)
+                                                              (line 126)
 * ne:                                    Page Control.        (line  34)
 * nf:                                    Manipulating Filling and Adjusting.
                                                               (line  41)
@@ -4883,7 +5315,7 @@ Requests appear without the leading control character (normally either
 * nn:                                    Miscellaneous.       (line  72)
 * nop:                                   if-else.             (line  24)
 * nr <1>:                                Auto-increment.      (line  11)
-* nr:                                    Setting Registers.   (line   9)
+* nr:                                    Setting Registers.   (line  13)
 * nroff:                                 Troff and Nroff Mode.
                                                               (line  32)
 * ns:                                    Manipulating Spacing.
@@ -4892,13 +5324,13 @@ Requests appear without the leading control character (normally either
 * open:                                  I/O.                 (line 209)
 * opena:                                 I/O.                 (line 210)
 * os:                                    Page Control.        (line  55)
-* output:                                Diversions.          (line 185)
-* pc:                                    Page Layout.         (line  89)
+* output:                                Diversions.          (line 189)
+* pc:                                    Page Layout.         (line  93)
 * pev:                                   Debugging.           (line  64)
 * pi:                                    I/O.                 (line 149)
 * pl:                                    Page Layout.         (line  10)
 * pm:                                    Debugging.           (line  68)
-* pn:                                    Page Layout.         (line  77)
+* pn:                                    Page Layout.         (line  81)
 * pnr:                                   Debugging.           (line  79)
 * po:                                    Line Layout.         (line  61)
 * ps:                                    Changing Type Sizes. (line   7)
@@ -4908,14 +5340,14 @@ Requests appear without the leading control character (normally either
 * pvs:                                   Changing Type Sizes. (line 133)
 * rchar:                                 Using Symbols.       (line 388)
 * rd:                                    I/O.                 (line  90)
-* return:                                Writing Macros.      (line 151)
+* return:                                Writing Macros.      (line 156)
 * rfschar:                               Using Symbols.       (line 389)
 * rj:                                    Manipulating Filling and Adjusting.
-                                                              (line 238)
-* rm:                                    Strings.             (line 232)
-* rn:                                    Strings.             (line 229)
-* rnn:                                   Setting Registers.   (line 110)
-* rr:                                    Setting Registers.   (line 106)
+                                                              (line 260)
+* rm:                                    Strings.             (line 236)
+* rn:                                    Strings.             (line 233)
+* rnn:                                   Setting Registers.   (line 114)
+* rr:                                    Setting Registers.   (line 110)
 * rs:                                    Manipulating Spacing.
                                                               (line 132)
 * rt:                                    Page Motions.        (line  11)
@@ -4930,9 +5362,9 @@ Requests appear without the leading control character (normally either
 * special:                               Special Fonts.       (line  17)
 * spreadwarn:                            Debugging.           (line 136)
 * ss:                                    Manipulating Filling and Adjusting.
-                                                              (line 134)
-* sty:                                   Font Families.       (line  60)
-* substring:                             Strings.             (line 201)
+                                                              (line 156)
+* sty:                                   Font Families.       (line  61)
+* substring:                             Strings.             (line 205)
 * sv:                                    Page Control.        (line  54)
 * sy:                                    I/O.                 (line 171)
 * ta:                                    Tabs and Fields.     (line  14)
@@ -4953,9 +5385,9 @@ Requests appear without the leading control character (normally either
                                                               (line 247)
 * troff:                                 Troff and Nroff Mode.
                                                               (line  24)
-* uf:                                    Artificial Fonts.    (line  91)
-* ul:                                    Artificial Fonts.    (line  65)
-* unformat:                              Diversions.          (line 220)
+* uf:                                    Artificial Fonts.    (line  93)
+* ul:                                    Artificial Fonts.    (line  67)
+* unformat:                              Diversions.          (line 228)
 * vpt:                                   Page Location Traps. (line  17)
 * vs:                                    Changing Type Sizes. (line  84)
 * warn:                                  Debugging.           (line 159)
@@ -4979,7 +5411,7 @@ printing glyph X.
 * Menu:
 
 * \:                                     Using Symbols.       (line 137)
-* \!:                                    Diversions.          (line 138)
+* \!:                                    Diversions.          (line 142)
 * \":                                    Comments.            (line  10)
 * \#:                                    Comments.            (line  50)
 * \$:                                    Parameters.          (line  19)
@@ -4994,7 +5426,7 @@ printing glyph X.
 * \':                                    Using Symbols.       (line 227)
 * \):                                    Ligatures and Kerning.
                                                               (line 131)
-* \*:                                    Strings.             (line  13)
+* \*:                                    Strings.             (line  17)
 * \,:                                    Ligatures and Kerning.
                                                               (line  92)
 * \-:                                    Using Symbols.       (line 236)
@@ -5007,7 +5439,7 @@ printing glyph X.
                                                               (line  85)
 * \<RET>:                                Line Control.        (line  43)
 * \<SP>:                                 Page Motions.        (line 123)
-* \?:                                    Diversions.          (line 139)
+* \?:                                    Diversions.          (line 143)
 * \\:                                    Character Translations.
                                                               (line  70)
 * \^:                                    Page Motions.        (line 139)
@@ -5026,7 +5458,7 @@ printing glyph X.
 * \e:                                    Character Translations.
                                                               (line  71)
 * \f:                                    Font Positions.      (line  59)
-* \F:                                    Font Families.       (line  21)
+* \F:                                    Font Families.       (line  22)
 * \f:                                    Changing Fonts.      (line   8)
 * \g:                                    Assigning Formats.   (line  74)
 * \h:                                    Page Motions.        (line 112)
@@ -5043,11 +5475,11 @@ printing glyph X.
 * \O:                                    Suppressing output.  (line   7)
 * \o:                                    Page Motions.        (line 226)
 * \p:                                    Manipulating Filling and Adjusting.
-                                                              (line 113)
+                                                              (line 135)
 * \r:                                    Page Motions.        (line 103)
-* \R:                                    Setting Registers.   (line  10)
+* \R:                                    Setting Registers.   (line  14)
 * \s:                                    Changing Type Sizes. (line  10)
-* \S:                                    Artificial Fonts.    (line  45)
+* \S:                                    Artificial Fonts.    (line  46)
 * \t:                                    Tabs and Fields.     (line  10)
 * \u:                                    Page Motions.        (line 106)
 * \V:                                    I/O.                 (line 259)
@@ -5113,31 +5545,31 @@ length can be accessed as `\n[xxx]'.
 
 * $$:                                    Built-in Registers.  (line 100)
 * % <1>:                                 Page Control.        (line  10)
-* %:                                     Page Layout.         (line  89)
+* %:                                     Page Layout.         (line  93)
 * .$:                                    Parameters.          (line  10)
 * .a:                                    Manipulating Spacing.
                                                               (line  90)
 * .A:                                    Built-in Registers.  (line 107)
-* .b:                                    Artificial Fonts.    (line  98)
+* .b:                                    Artificial Fonts.    (line 100)
 * .br:                                   Requests.            (line  58)
 * .C:                                    Implementation Differences.
                                                               (line  25)
 * .c:                                    Built-in Registers.  (line  77)
 * .cdp:                                  Environments.        (line  96)
 * .ce:                                   Manipulating Filling and Adjusting.
-                                                              (line 190)
+                                                              (line 212)
 * .cht:                                  Environments.        (line  95)
 * .color:                                Colors.              (line   8)
 * .csk:                                  Environments.        (line  97)
-* .d:                                    Diversions.          (line  67)
+* .d:                                    Diversions.          (line  71)
 * .ev:                                   Environments.        (line  39)
 * .f:                                    Font Positions.      (line  12)
 * .F:                                    Built-in Registers.  (line  12)
-* .fam:                                  Font Families.       (line  20)
-* .fn:                                   Font Families.       (line  24)
+* .fam:                                  Font Families.       (line  21)
+* .fn:                                   Font Families.       (line  25)
 * .fp:                                   Font Positions.      (line  13)
 * .g:                                    Built-in Registers.  (line 103)
-* .h:                                    Diversions.          (line  74)
+* .h:                                    Diversions.          (line  78)
 * .H:                                    Built-in Registers.  (line  15)
 * .height:                               Artificial Fonts.    (line  16)
 * .hla:                                  Manipulating Hyphenation.
@@ -5167,7 +5599,7 @@ length can be accessed as `\n[xxx]'.
                                                               (line  24)
 * .linetabs:                             Tabs and Fields.     (line 148)
 * .ll:                                   Line Layout.         (line 149)
-* .lt:                                   Page Layout.         (line  63)
+* .lt:                                   Page Layout.         (line  67)
 * .M:                                    Colors.              (line  89)
 * .m:                                    Colors.              (line  55)
 * .n:                                    Environments.        (line 112)
@@ -5179,7 +5611,7 @@ length can be accessed as `\n[xxx]'.
 * .p:                                    Page Layout.         (line  13)
 * .P:                                    Built-in Registers.  (line 116)
 * .pe:                                   Page Location Traps. (line 152)
-* .pn:                                   Page Layout.         (line  80)
+* .pn:                                   Page Layout.         (line  84)
 * .ps:                                   Fractional Type Sizes.
                                                               (line  35)
 * .psr:                                  Fractional Type Sizes.
@@ -5187,15 +5619,15 @@ length can be accessed as `\n[xxx]'.
 * .pvs:                                  Changing Type Sizes. (line 136)
 * .R:                                    Built-in Registers.  (line  18)
 * .rj:                                   Manipulating Filling and Adjusting.
-                                                              (line 239)
+                                                              (line 261)
 * .s:                                    Changing Type Sizes. (line  11)
-* .slant:                                Artificial Fonts.    (line  46)
+* .slant:                                Artificial Fonts.    (line  47)
 * .sr:                                   Fractional Type Sizes.
                                                               (line  43)
 * .ss:                                   Manipulating Filling and Adjusting.
-                                                              (line 135)
+                                                              (line 157)
 * .sss:                                  Manipulating Filling and Adjusting.
-                                                              (line 136)
+                                                              (line 158)
 * .sty:                                  Changing Fonts.      (line  11)
 * .t:                                    Page Location Traps. (line 110)
 * .T:                                    Built-in Registers.  (line 122)
@@ -5212,14 +5644,14 @@ length can be accessed as `\n[xxx]'.
 * .x:                                    Built-in Registers.  (line  89)
 * .Y:                                    Built-in Registers.  (line  97)
 * .y:                                    Built-in Registers.  (line  93)
-* .z:                                    Diversions.          (line  66)
+* .z:                                    Diversions.          (line  70)
 * .zoom:                                 Changing Fonts.      (line  74)
 * c.:                                    Built-in Registers.  (line  78)
 * ct:                                    Page Motions.        (line 160)
 * DD [ms]:                               ms Document Control Registers.
                                                               (line 239)
-* dl:                                    Diversions.          (line  92)
-* dn:                                    Diversions.          (line  91)
+* dl:                                    Diversions.          (line  96)
+* dn:                                    Diversions.          (line  95)
 * dw:                                    Built-in Registers.  (line  43)
 * dy:                                    Built-in Registers.  (line  46)
 * FAM [ms]:                              ms Document Control Registers.
@@ -5418,7 +5850,7 @@ They appear without the leading control character (normally `.').
                                                               (line  15)
 * LG [ms]:                               Highlighting in ms.  (line  52)
 * LP [man]:                              Man usage.           (line  69)
-* LP [ms]:                               Paragraphs in ms.    (line  10)
+* LP [ms]:                               Paragraphs in ms.    (line  12)
 * MC [ms]:                               ms Multiple Columns. (line  19)
 * MS [man]:                              Optional man extensions.
                                                               (line  73)
@@ -5452,7 +5884,7 @@ They appear without the leading control character (normally `.').
 * PT [ms]:                               ms Headers and Footers.
                                                               (line  38)
 * PX [ms]:                               ms TOC.              (line  65)
-* QP [ms]:                               Paragraphs in ms.    (line  13)
+* QP [ms]:                               Paragraphs in ms.    (line  15)
 * R [man]:                               Optional man extensions.
                                                               (line  98)
 * R [ms]:                                Highlighting in ms.  (line  27)
@@ -5495,7 +5927,7 @@ They appear without the leading control character (normally `.').
                                                               (line 104)
 * XA [ms]:                               ms TOC.              (line  13)
 * XE [ms]:                               ms TOC.              (line  14)
-* XP [ms]:                               Paragraphs in ms.    (line  18)
+* XP [ms]:                               Paragraphs in ms.    (line  20)
 * XS [ms]:                               ms TOC.              (line  12)
 
 
@@ -5677,10 +6109,10 @@ Anhang I Font File Keyword Index
 * spare1:                                DESC File Format.    (line 144)
 * spare2:                                DESC File Format.    (line 144)
 * special <1>:                           Font File Format.    (line  28)
-* special:                               Artificial Fonts.    (line 116)
+* special:                               Artificial Fonts.    (line 118)
 * styles <1>:                            DESC File Format.    (line 102)
 * styles <2>:                            Font Positions.      (line  61)
-* styles <3>:                            Font Families.       (line  75)
+* styles <3>:                            Font Families.       (line  76)
 * styles:                                Changing Fonts.      (line  11)
 * tcommand:                              DESC File Format.    (line 105)
 * unicode:                               DESC File Format.    (line 109)
@@ -5707,7 +6139,7 @@ Anhang J Program and File Index
 * DESC <1>:                              Special Fonts.       (line  18)
 * DESC <2>:                              Using Symbols.       (line  14)
 * DESC <3>:                              Font Positions.      (line  61)
-* DESC <4>:                              Font Families.       (line  75)
+* DESC <4>:                              Font Families.       (line  76)
 * DESC:                                  Changing Fonts.      (line  11)
 * DESC file format:                      DESC File Format.    (line   6)
 * DESC, and font mounting:               Font Positions.      (line  37)
@@ -5717,6 +6149,7 @@ Anhang J Program and File Index
 * ec.tmac:                               Input Encodings.     (line  46)
 * eqn:                                   ms Insertions.       (line   7)
 * freeeuro.pfa:                          Input Encodings.     (line  46)
+* gchem:                                 Groff Options.       (line   6)
 * geqn:                                  Groff Options.       (line   6)
 * geqn, invocation in manual pages:      Preprocessors in man pages.
                                                               (line  12)
@@ -5742,6 +6175,7 @@ Anhang J Program and File Index
 * latin1.tmac:                           Input Encodings.     (line  14)
 * latin2.tmac:                           Input Encodings.     (line  18)
 * latin9.tmac:                           Input Encodings.     (line  28)
+* less:                                  Invoking grotty.     (line  51)
 * makeindex:                             Indices.             (line  10)
 * man, invocation of preprocessors:      Preprocessors in man pages.
                                                               (line  12)
@@ -5756,25 +6190,25 @@ Anhang J Program and File Index
 * papersize.tmac:                        Paper Size.          (line  16)
 * perl:                                  I/O.                 (line 182)
 * pic:                                   ms Insertions.       (line   7)
-* post-grohtml:                          Groff Options.       (line 269)
-* pre-grohtml:                           Groff Options.       (line 269)
+* post-grohtml:                          Groff Options.       (line 275)
+* pre-grohtml:                           Groff Options.       (line 275)
 * preconv:                               Groff Options.       (line   6)
 * refer:                                 ms Insertions.       (line   7)
 * soelim:                                Debugging.           (line  10)
 * tbl:                                   ms Insertions.       (line   7)
-* trace.tmac:                            Writing Macros.      (line 105)
+* trace.tmac:                            Writing Macros.      (line 110)
 * troffrc <1>:                           Line Layout.         (line  64)
 * troffrc <2>:                           Troff and Nroff Mode.
                                                               (line  24)
 * troffrc <3>:                           Manipulating Hyphenation.
                                                               (line 163)
 * troffrc <4>:                           Paper Size.          (line  16)
-* troffrc:                               Groff Options.       (line 205)
+* troffrc:                               Groff Options.       (line 208)
 * troffrc-end <1>:                       Troff and Nroff Mode.
                                                               (line  24)
 * troffrc-end <2>:                       Manipulating Hyphenation.
                                                               (line 163)
-* troffrc-end:                           Groff Options.       (line 205)
+* troffrc-end:                           Groff Options.       (line 208)
 * tty.tmac:                              Troff and Nroff Mode.
                                                               (line  32)
 

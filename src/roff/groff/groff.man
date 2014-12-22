@@ -1,9 +1,9 @@
 .ig
 groff.man
 
-Copyright (C) 1989, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009
+Copyright (C) 1989, 2002-2009, 2011
 Free Software Foundation, Inc.
-Rewritten in 2002 by Bernd Warken <bwarken@mayn.de>
+Rewritten in 2002 by Bernd Warken <groff-bernd.warken-72@web.de>
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -44,7 +44,7 @@ groff \- front-end for the groff document formatting system
 .\" --------------------------------------------------------------------
 .
 .SY groff
-.OP \-abcegiklpstzCEGNRSUVXZ
+.OP \-abcegijklpstzCEGNRSUVXZ
 .OP \-d cs
 .OP \-D arg
 .OP \-f fam
@@ -187,6 +187,9 @@ Preprocess with
 Preprocess with
 .BR grap .
 .
+Implies
+.BR \-p .
+.
 .
 .TP
 .B \-h
@@ -214,6 +217,15 @@ No directory search is performed for files specified using an absolute path.
 This option implies the
 .B \-s
 option.
+.
+.
+.TP
+.B \-j
+Preprocess with
+.BR @g@chem .
+.
+Implies
+.BR \-p .
 .
 .
 .TP
@@ -444,6 +456,11 @@ is
 ps
 PostScript output (postprocessor is
 .BR grops ).
+.
+.TP
+pdf
+Portable Document Format (PDF) output (postprocessor is
+.BR gropdf ).
 .RE
 .RE
 .
@@ -1094,6 +1111,13 @@ PostScript output; suitable for printers and previewers like
 .BR gv (1).
 .
 .TP
+.B pdf
+PDF files; suitable for viewing with tools such as
+.BR evince (1)
+and 
+.BR okular (1).
+.
+.TP
 .B utf8
 Text output using the Unicode (ISO 10646) character set with \%UTF-8
 encoding; see
@@ -1182,6 +1206,10 @@ for HTML and XHTML formats,
 .TP
 .BR grops (@MAN1EXT@)
 for PostScript.
+.
+.TP
+.BR gropdf (@MAN1EXT@)
+for PDF.
 .
 .P
 Combined with the many existing free conversion tools this should
@@ -1713,7 +1741,7 @@ This is the only grap version supported by
 .SH AUTHORS
 .\" --------------------------------------------------------------------
 .
-Copyright \(co 1989, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009
+Copyright \(co 2011
 Free Software Foundation, Inc.
 .
 .P
@@ -1735,7 +1763,7 @@ James Clark
 .UE .
 .
 It was rewritten, enhanced, and put under the FDL license by
-Bernd Warken.
+Bernd Warken <groff-bernd.warken-72@web.de>.
 .
 It is maintained by
 .MT wl@gnu.org 
@@ -1833,6 +1861,7 @@ Postprocessors for the output devices:
 .BR \%grolj4 (@MAN1EXT@),
 .BR \%lj4_font (@MAN5EXT@),
 .BR \%grops (@MAN1EXT@),
+.BR \%gropdf (@MAN1EXT@),
 .BR \%grotty (@MAN1EXT@).
 .
 .TP

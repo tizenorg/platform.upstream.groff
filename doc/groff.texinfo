@@ -1,4 +1,4 @@
-\input texinfo   @c -*-texinfo-*-
+\input texinfo
 
 @c
 @c Please convert this manual with `texi2dvi -e groff.texinfo' due to
@@ -24,11 +24,9 @@
 
 
 @copying
-This manual documents GNU @code{troff} version 1.21.
+This manual documents GNU @code{troff} version 1.22.2.
 
-Copyright @copyright{} 1994-2000, 2001, 2002, 2003, 2004, 2005, 2006,
-2007, 2008, 2009, 2010
-Free Software Foundation, Inc.
+Copyright @copyright{} 1994-2013 Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -313,7 +311,7 @@ developing GNU and promoting software freedom.''
 @end macro
 
 
-@c our example macro
+@c our example macros
 
 @macro Example
 @example
@@ -323,6 +321,16 @@ developing GNU and promoting software freedom.''
 @macro endExample
 @end group
 @end example
+@end macro
+
+@macro CartoucheExample
+@cartouche
+@example
+@end macro
+
+@macro endCartoucheExample
+@end example
+@end cartouche
 @end macro
 
 
@@ -473,8 +481,8 @@ developing GNU and promoting software freedom.''
 @titlepage
 @title groff
 @subtitle The GNU implementation of @code{troff}
-@subtitle Edition 1.21
-@subtitle Winter 2010
+@subtitle Edition 1.22.2
+@subtitle Spring 2013
 @author by Trent A.@tie{}Fisher
 @author and Werner Lemberg (@email{bug-groff@@gnu.org})
 
@@ -834,9 +842,10 @@ preprocessors to use.
 
 @code{groff} currently has preprocessors for producing tables
 (@code{tbl}), typesetting equations (@code{eqn}), drawing pictures
-(@code{pic} and @code{grn}), and for processing bibliographies
-(@code{refer}).  An associated program which is useful when dealing with
-preprocessors is @code{soelim}.
+(@code{pic} and @code{grn}), processing bibliographies
+(@code{refer}), and drawing chemical structures (@code{chem}).  An
+associated program which is useful when dealing with preprocessors is
+@code{soelim}.
 
 A free implementation of @code{grap}, a preprocessor for drawing graphs,
 can be obtained as an extra package; @code{groff} can use @code{grap}
@@ -846,9 +855,8 @@ Unique to @code{groff} is the @code{preconv} preprocessor which enables
 @code{groff} to handle documents in various input encodings.
 
 There are other preprocessors in existence, but, unfortunately, no free
-implementations are available.  Among them are preprocessors for drawing
-mathematical pictures (@code{ideal}) and chemical structures
-(@code{chem}).
+implementations are available.  Among them is a preprocessor for drawing
+mathematical pictures (@code{ideal}).
 
 
 @c =====================================================================
@@ -864,7 +872,7 @@ into a postprocessor to produce output for a particular device.
 Currently, @code{groff} has postprocessors for @sc{PostScript} devices,
 character terminals, X@tie{}Windows (for previewing), @TeX{} DVI format,
 HP LaserJet@tie{}4 and Canon LBP printers (which use @acronym{CAPSL}),
-@acronym{HTML}, and @acronym{XHTML}.
+@acronym{HTML}, @acronym{XHTML}, and PDF.
 
 
 @c =====================================================================
@@ -936,29 +944,31 @@ Similarly, we say @samp{gpic}, @samp{geqn}, etc.
 @pindex ggrn
 @pindex grap
 @pindex gtbl
+@pindex gchem
 @pindex grefer
 @pindex gsoelim
 @pindex preconv
-@code{groff} normally runs the @code{gtroff} program and a postprocessor
-appropriate for the selected device.  The default device is @samp{ps}
-(but it can be changed when @code{groff} is configured and built).  It
-can optionally preprocess with any of @code{gpic}, @code{geqn},
-@code{gtbl}, @code{ggrn}, @code{grap}, @code{grefer}, @code{gsoelim}, or
-@code{preconv}.
+@code{groff} normally runs the @code{gtroff} program and a
+postprocessor appropriate for the selected device.  The default device
+is @samp{ps} (but it can be changed when @code{groff} is configured and
+built).  It can optionally preprocess with any of @code{gpic},
+@code{geqn}, @code{gtbl}, @code{ggrn}, @code{grap}, @code{gchem},
+@code{grefer}, @code{gsoelim}, or @code{preconv}.
 
 This section only documents options to the @code{groff} front end.  Many
 of the arguments to @code{groff} are passed on to @code{gtroff},
 therefore those are also included.  Arguments to pre- or postprocessors
 can be found in @ref{Invoking gpic}, @ref{Invoking geqn}, @ref{Invoking
-gtbl}, @ref{Invoking ggrn}, @ref{Invoking grefer}, @ref{Invoking
-gsoelim}, @ref{Invoking preconv}, @ref{Invoking grotty}, @ref{Invoking
-grops}, @ref{Invoking grohtml}, @ref{Invoking grodvi}, @ref{Invoking
-grolj4}, @ref{Invoking grolbp}, and @ref{Invoking gxditview}.
+gtbl}, @ref{Invoking ggrn}, @ref{Invoking grefer}, @ref{Invoking gchem},
+@ref{Invoking gsoelim}, @ref{Invoking preconv}, @ref{Invoking grotty},
+@ref{Invoking grops}, @ref{Invoking gropdf}, @ref{Invoking grohtml},
+@ref{Invoking grodvi}, @ref{Invoking grolj4}, @ref{Invoking grolbp}, and
+@ref{Invoking gxditview}.
 
 The command line format for @code{groff} is:
 
 @Example
-groff [ -abceghiklpstvzCEGNRSUVXZ ] [ -d@var{cs} ] [ -D@var{arg} ]
+groff [ -abceghijklpstvzCEGNRSUVXZ ] [ -d@var{cs} ] [ -D@var{arg} ]
       [ -f@var{fam} ] [ -F@var{dir} ] [ -I@var{dir} ] [ -K@var{arg} ]
       [ -L@var{arg} ] [ -m@var{name} ] [ -M@var{dir} ] [ -n@var{num} ]
       [ -o@var{list} ] [ -P@var{arg} ] [ -r@var{cn} ] [ -T@var{def} ]
@@ -1050,7 +1060,7 @@ using the @env{GROFF_FONT_PATH} environment variable.
 Preprocess with @code{ggrn}.
 
 @item -G
-Preprocess with @code{grap}.
+Preprocess with @code{grap}.  Implies @option{-p}.
 
 @item -h
 Print a help message.
@@ -1081,6 +1091,9 @@ The current directory is always searched first.  This option may be
 specified more than once; the directories are searched in the order
 specified.  No directory search is performed for files specified using
 an absolute path.
+
+@item -j
+Preprocess with @code{gchem}.  Implies @option{-p}.
 
 @item -k
 Preprocess with @code{preconv}.  This is run before any other
@@ -1190,6 +1203,9 @@ following are the output devices currently available:
 @table @code
 @item ps
 For @sc{PostScript} printers and previewers.
+
+@item pdf
+For PDF viewers or printers.
 
 @item dvi
 For @TeX{} DVI format.
@@ -1331,10 +1347,10 @@ by @code{groff}.
 @cindex prefix, for commands
 If this is set to@tie{}@var{X}, then @code{groff} runs
 @code{@var{X}troff} instead of @code{gtroff}.  This also applies to
-@code{tbl}, @code{pic}, @code{eqn}, @code{grn}, @code{refer}, and
-@code{soelim}.  It does not apply to @code{grops}, @code{grodvi},
-@code{grotty}, @code{pre-grohtml}, @code{post-grohtml}, @code{preconv},
-@code{grolj4}, and @code{gxditview}.
+@code{tbl}, @code{pic}, @code{eqn}, @code{grn}, @code{chem},
+@code{refer}, and @code{soelim}.  It does not apply to @code{grops},
+@code{grodvi}, @code{grotty}, @code{pre-grohtml}, @code{post-grohtml},
+@code{preconv}, @code{grolj4}, @code{gropdf}, and @code{gxditview}.
 
 The default command prefix is determined during the installation
 process.  If a non-GNU troff system is found, prefix @samp{g} is used,
@@ -1442,11 +1458,11 @@ directory, and the main tmac directory; the default locations are
 @Example
 /usr/local/lib/groff/site-tmac
 /usr/local/share/groff/site-tmac
-/usr/local/share/groff/1.21/tmac
+/usr/local/share/groff/1.22.2/tmac
 @endExample
 
 @noindent
-assuming that the version of @code{groff} is 1.21, and the
+assuming that the version of @code{groff} is 1.22.2, and the
 installation prefix was @file{/usr/local}.  It is possible to fine-tune
 those directories during the installation process.
 @end itemize
@@ -1499,11 +1515,11 @@ locations are
 
 @Example
 /usr/local/share/groff/site-font
-/usr/local/share/groff/1.21/font
+/usr/local/share/groff/1.22.2/font
 @endExample
 
 @noindent
-assuming that the version of @code{groff} is 1.21, and the
+assuming that the version of @code{groff} is 1.22.2, and the
 installation prefix was @file{/usr/local}.  It is possible to fine-tune
 those directories during the installation process.
 @end itemize
@@ -2128,6 +2144,7 @@ groff -m man -m ms foo.man bar.doc
 * ms::
 * me::
 * mm::
+* mom::
 @end menu
 
 
@@ -2531,8 +2548,8 @@ release number (such as ``System V Release 3'').
 
 @Defmac {UC, [@Var{version}], man}
 @cindex @code{man}macros, BSD compatibility
-Alters the footer for use with @acronym{BSD} manpages.  This command
-exists only for compatibility; don't use it.  The argument can be:
+Alters the footer for use with BSD manpages.  This command exists only
+for compatibility; don't use it.  The argument can be:
 
 @table @code
 @item 3
@@ -3211,8 +3228,7 @@ The following is example mark-up for a title page.
 @cindex title page, example markup
 @cindex example markup, title page
 
-@Example
-@cartouche
+@CartoucheExample
 .RP
 .TL
 The Inevitability of Code Bloat
@@ -3240,8 +3256,7 @@ user demand.
 .AE
 
 ... the rest of the paper follows ...
-@end cartouche
-@endExample
+@endCartoucheExample
 
 @c ---------------------------------------------------------------------
 
@@ -3273,9 +3288,12 @@ Examples include paragraphs, sections, and other groups.
 
 The following paragraph types are available.
 
-@DefmacList {PP, , ms}
-@DefmacListEnd {LP, , ms}
+@Defmac {PP, , ms}
 Sets a paragraph with an initial indentation.
+@endDefmac
+
+@Defmac {LP, , ms}
+Sets a paragraph without an initial indentation.
 @endDefmac
 
 @Defmac {QP, , ms}
@@ -3291,8 +3309,7 @@ This is a Berkeley extension.
 
 The following markup uses all four paragraph macros.
 
-@Example
-@cartouche
+@CartoucheExample
 .NH 2
 Cases used in the study
 .LP
@@ -3322,8 +3339,7 @@ Underground Press, March 2002.
 A definitive work that answers all questions
 and criticisms about the quality and usability of
 free software.
-@end cartouche
-@endExample
+@endCartoucheExample
 
 The @code{PORPHANS} register (@pxref{ms Document Control Registers})
 operates in conjunction with each of these macros, to inhibit the
@@ -3611,8 +3627,7 @@ a break.
 The first workaround uses the @code{br} request to force a break after
 printing the term or label.
 
-@Example
-@cartouche
+@CartoucheExample
 A glossary-style list:
 .IP lawyers 0.4i
 Two or more attorneys.
@@ -3621,16 +3636,14 @@ Two or more attorneys.
 Firearms, preferably large-caliber.
 .IP money
 Gotta pay for those lawyers and guns!
-@end cartouche
-@endExample
+@endCartoucheExample
 
 The second workaround uses the @code{\p} escape to force the break.
 Note the space following the escape; this is important.  If you omit the
 space, @code{groff} prints the first word on the same line as the term
 or label (if it fits) @strong{then} breaks the line.
 
-@Example
-@cartouche
+@CartoucheExample
 A glossary-style list:
 .IP lawyers 0.4i
 Two or more attorneys.
@@ -3638,8 +3651,7 @@ Two or more attorneys.
 \p Firearms, preferably large-caliber.
 .IP money
 Gotta pay for those lawyers and guns!
-@end cartouche
-@endExample
+@endCartoucheExample
 
 To set nested lists, use the @code{RS} and @code{RE} macros.
 @xref{Indentation values in ms}, for more information.
@@ -3648,8 +3660,7 @@ To set nested lists, use the @code{RS} and @code{RE} macros.
 
 For example:
 
-@Example
-@cartouche
+@CartoucheExample
 .IP \[bu] 2
 Lawyers:
 .RS
@@ -3662,8 +3673,7 @@ and Howe.
 .RE
 .IP \[bu]
 Guns
-@end cartouche
-@endExample
+@endCartoucheExample
 
 Produces:
 
@@ -3873,9 +3883,8 @@ equation.
 @DefmacList {[, , ms}
 @DefmacListEnd {], , ms}
 Denotes a reference, to be processed by the @code{refer} preprocessor.
-The @acronym{GNU} @cite{refer(1)} man page provides a comprehensive
-reference to the preprocessor and the format of the bibliographic
-database.
+The GNU @cite{refer(1)} man page provides a comprehensive reference to
+the preprocessor and the format of the bibliographic database.
 @endDefmac
 
 @menu
@@ -3892,8 +3901,7 @@ database.
 The following is an example of how to set up a table that may print
 across two or more pages.
 
-@Example
-@cartouche
+@CartoucheExample
 .TS H
 allbox expand;
 cb | cb .
@@ -3905,8 +3913,7 @@ l | l .
 ... the rest of the table follows...
 .CW
 .TE
-@end cartouche
-@endExample
+@endCartoucheExample
 
 @c ---------------------------------------------------------------------
 
@@ -4079,8 +4086,7 @@ they cannot indent a heading based on its level.  The easiest way to
 work around this is to add tabs to the table of contents string.  The
 following is an example:
 
-@Example
-@cartouche
+@CartoucheExample
 .NH 1
 Introduction
 .XS
@@ -4096,8 +4102,7 @@ Methodology
 .XE
 .LP
 ...
-@end cartouche
-@endExample
+@endCartoucheExample
 
 You can manually create a table of contents by beginning with the
 @code{XS} macro for the first entry, specifying the page number for that
@@ -4105,8 +4110,7 @@ entry as the argument to @code{XS}.  Add subsequent entries using the
 @code{XA} macro, specifying the page number for that entry as the
 argument to @code{XA}.  The following is an example:
 
-@Example
-@cartouche
+@CartoucheExample
 .XS 1
 Introduction
 .XA 2
@@ -4115,8 +4119,7 @@ A Brief History of the Universe
 Details of Galactic Formation
 ...
 .XE
-@end cartouche
-@endExample
+@endCartoucheExample
 @endDefmac
 
 @Defmac {TC, [@code{no}], ms}
@@ -4542,7 +4545,7 @@ See the @file{meintro.me} and @file{meref.me} documents in groff's
 
 @c =====================================================================
 
-@node mm,  , me, Macro Packages
+@node mm, mom, me, Macro Packages
 @section @file{mm}
 @cindex @code{mm} macro package
 
@@ -4550,6 +4553,19 @@ See the @file{meintro.me} and @file{meref.me} documents in groff's
 @c XXX this is a placeholder until we get stuff knocked into shape
 See the @cite{groff_mm(7)} man page (type @command{man groff_mm} at the
 command line).
+
+
+@c =====================================================================
+
+@node mom,  , mm, Macro Packages
+@section @file{mom}
+@cindex @code{mom} macro package
+
+@c XXX documentation
+@c XXX this is a placeholder until we get stuff knocked into shape
+See the @cite{groff_mom(7)} man page (type @command{man groff_mom} at
+the command line), which gives a short overview and a link to its
+extensive documentation in HTML format.
 
 
 
@@ -5139,7 +5155,7 @@ and negates the entire expression.
 Attempting to insert the @samp{!} operator
 within the expression results in a
 @samp{numeric expression expected} warning.  This
-maintains bug-compatibility
+maintains compatibility
 with old versions of @code{troff}.
 
 Example:
@@ -6013,6 +6029,10 @@ details of formatting parameters.
 Define or set registers using the @code{nr} request or the @code{\R}
 escape.
 
+Although the following requests and escapes can be used to create
+registers, simply using an undefined register will cause it to be
+set to zero.
+
 @DefreqList {nr, ident value}
 @DefescListEnd {\\R, ', ident value, '}
 Set number register @var{ident} to @var{value}.  If @var{ident} doesn't
@@ -6051,13 +6071,13 @@ aaa bbb ccc ddd eee fff ggg hhh\h'0'\R':k \n[.k]'
     @result{} :k == 15000
 @endExample
 
-If you process this with the PostScript device (@code{-Tps}), there
-will be a line break eventually after @code{ggg} in both input lines.
-However, after processing the space after @code{ggg}, the partially
-collected line is not overfull yet, so @code{troff} continues to
-collect input until it sees the space (or in this case, the newline)
-after @code{hhh}.  At this point, the line is longer than the line
-length, and the line gets broken.
+If you process this with the @sc{PostScript} device (@code{-Tps}),
+there will be a line break eventually after @code{ggg} in both input
+lines.  However, after processing the space after @code{ggg}, the
+partially collected line is not overfull yet, so @code{troff}
+continues to collect input until it sees the space (or in this case,
+the newline) after @code{hhh}.  At this point, the line is longer
+than the line length, and the line gets broken.
 
 In the first input line, since the @code{\R} escape leaves no traces,
 the check for the overfull line hasn't been done yet at the point where
@@ -6671,28 +6691,52 @@ Justify to both margins.  This is the default used by @code{gtroff}.
 Finally, @var{mode} can be the numeric argument returned by the
 @code{.j} register.
 
-With no argument, @code{gtroff} adjusts lines in the same way it did
-before adjusting was deactivated (with a call to @code{na}, for
-example).
+Using @code{ad} without argument is the same as saying
+@w{@code{.ad \[.j]}}.  In particular, @code{gtroff} adjusts lines
+in the same way it did before adjusting was deactivated (with a call
+to @code{na}, say).  For example, this input code
 
 @Example
-text
-.ad r
+.de AD
+.  br
+.  ad \\$1
+..
+.
+.de NA
+.  br
+.  na
+..
+.
+textA
+.AD r
 .nr ad \n[.j]
-text
-.ad c
-text
-.na
-text
-.ad         \" back to centering
-text
-.ad \n[ad]  \" back to right justifying
+textB
+.AD c
+textC
+.NA
+textD
+.AD         \" back to centering
+textE
+.AD \n[ad]  \" back to right justifying
+textF
+@endExample
+
+@noindent
+produces the following output:
+
+@Example
+textA
+                                                    textB
+                          textC
+textD
+                          textE
+                                                    textF
 @endExample
 
 @cindex adjustment mode register (@code{.j})
-The current adjustment mode is available in the read-only number
-register @code{.j}; it can be stored and subsequently used to set
-adjustment.
+As just demonstrated, the current adjustment mode is available in the
+read-only number register @code{.j}; it can be stored and
+subsequently used to set adjustment.
 
 The adjustment mode status is associated with the current environment
 (@pxref{Environments}).
@@ -8505,6 +8549,11 @@ Some notes:
 
 @itemize @bullet
 @item
+The line length set by the @code{ll} request is not honoured by
+@code{tl}; use the @code{lt} request (described below) instead, to
+control line length for text set by @code{tl}.
+
+@item
 A title line is not restricted to the top or bottom of a page.
 
 @item
@@ -8889,10 +8938,10 @@ the current family.
 
 @cindex PostScript fonts
 @cindex fonts, PostScript
-Currently, fonts for the devices @option{-Tps}, @option{-Tdvi},
-@option{-Tlj4}, @option{-Tlbp}, and the X11 fonts are set up to this
-mechanism.  By default, @code{gtroff} uses the Times family with the
-four styles @samp{R}, @samp{I}, @samp{B}, and @samp{BI}.
+Currently, fonts for the devices @option{-Tps}, @option{-Tpdf},
+@option{-Tdvi}, @option{-Tlj4}, @option{-Tlbp}, and the X11 fonts are
+set up to this mechanism.  By default, @code{gtroff} uses the Times
+family with the four styles @samp{R}, @samp{I}, @samp{B}, and @samp{BI}.
 
 This way, it is possible to use the basic four fonts and to select a
 different font family on the command line (@pxref{Groff Options}).
@@ -9338,7 +9387,7 @@ Any component @code{u@var{XXXX}} which is found in the list of
 decomposable glyphs is decomposed.
 
 @item
-The resulting elements are then concatenated with @samp{_} inbetween,
+The resulting elements are then concatenated with @samp{_} in between,
 dropping the leading @samp{u} in all elements but the first.
 @end itemize
 
@@ -9707,7 +9756,7 @@ Unicode values (according to the groff glyph gist) which then give the
 start and end value of the range.  If that fails, the class definition
 is skipped.
 
-Finally, classes can be nested, too.  
+Finally, classes can be nested, too.
 
 Here is a more complex example:
 
@@ -9801,7 +9850,8 @@ Default scaling indicator is @samp{z}.
 The read-only number register @code{.height} contains the font height as
 set by @code{\H}.
 
-Currently, only the @option{-Tps} device supports this feature.
+Currently, only the @option{-Tps} and @option{-Tpdf} devices support
+this feature.
 
 Note that @code{\H} doesn't produce an input token in @code{gtroff}.  As
 a consequence, it can be used in requests like @code{mc} (which expects
@@ -9837,7 +9887,8 @@ the right.  Only integer values are possible.
 The read-only number register @code{.slant} contains the font slant as
 set by @code{\S}.
 
-Currently, only the @option{-Tps} device supports this feature.
+Currently, only the @option{-Tps} and @option{-Tpdf} devices support
+this feature.
 
 Note that @code{\S} doesn't produce an input token in @code{gtroff}.  As
 a consequence, it can be used in requests like @code{mc} (which expects
@@ -10513,6 +10564,10 @@ with a default scale indicator of @samp{z}.
 @code{gtroff} has string variables, which are entirely for user
 convenience (i.e.@: there are no built-in strings exept @code{.T}, but
 even this is a read-write string variable).
+
+Although the following requests can be used to create strings,
+simply using an undefined string will cause it to be defined as empty.
+@xref{Identifiers}.
 
 @DefreqList {ds, name [@Var{string}]}
 @DefreqItem {ds1, name [@Var{string}]}
@@ -11236,14 +11291,19 @@ A @dfn{macro} is a collection of text and embedded commands which can be
 invoked multiple times.  Use macros to define common operations.
 @xref{Strings}, for a (limited) alternative syntax to call macros.
 
+Although the following requests can be used to create macros,
+simply using an undefined macro will cause it to be defined as empty.
+@xref{Identifiers}.
+
 @DefreqList {de, name [@Var{end}]}
 @DefreqItem {de1, name [@Var{end}]}
 @DefreqItem {dei, name [@Var{end}]}
 @DefreqListEnd {dei1, name [@Var{end}]}
 Define a new macro named @var{name}.  @code{gtroff} copies subsequent
 lines (starting with the next one) into an internal buffer until it
-encounters the line @samp{..} (two dots).  The optional second argument
-to @code{de} changes this to a macro to @samp{.@var{end}}.
+encounters the line @samp{..} (two dots).  If the optional second
+argument to @code{de} is present it is used as the macro closure
+request instead of @samp{..}.
 
 There can be whitespace after the first dot in the line containing the
 ending token (either @samp{.} or macro @samp{@var{end}}).  Don't insert
@@ -12672,6 +12732,33 @@ line three
 Note that this specific feature affects only the first potential page
 break caused by the end macro; further page breaks emitted by the end
 macro are handled normally.
+
+Another possible use of the @code{em} request is to make @code{gtroff}
+emit a single large page instead of multiple pages.  For example, one
+may want to produce a long plain-text file for reading on-screen.  The
+idea is to set the page length at the beginning of the document to a
+very large value to hold all the text, and automatically adjust it to
+the exact height of the document after the text has been output.
+
+@Example
+.de adjust-page-length
+.  br
+.  pl \\n[nl]u   \" \n[nl] holds the current page length
+..
+.
+.de single-page-mode
+.  pl 99999
+.  em adjust-page-length
+..
+.
+.\" activate the above code
+.single-page-mode
+@endExample
+
+Since only one end-of-input trap does exist and other macro packages
+may already use it, care must be taken not to break the mechanism.  A
+simple solution would be to append the above macro to the macro
+package's end-of-input macro using the @code{.am} request.
 @endDefreq
 
 
@@ -12692,6 +12779,10 @@ page, footnotes, tables of contents, and indices.
 For orthogonality it is said that @code{gtroff} is in the @dfn{top-level
 diversion} if no diversion is active (i.e., the data is diverted to the
 output device).
+
+Although the following requests can be used to create diversions,
+simply using an undefined diversion will cause it to be defined as empty.
+@xref{Identifiers}.
 
 @DefreqList {di, macro}
 @DefreqListEnd {da, macro}
@@ -12955,6 +13046,10 @@ the following sets register@tie{}@code{n} to@tie{}1.
 .asciify x
 .x
 @endExample
+
+Note that @code{asciify} cannot return all items in a diversion back
+to their source equivalent, nodes such as @code{\N[...]} will still
+remain as nodes, so the result cannot be guaranteed to be a pure string.
 
 @xref{Copy-in Mode}.
 @endDefreq
@@ -13915,7 +14010,7 @@ But we can fake it with `\&'.  |
 @DefregListEnd {ury}
 @cindex PostScript, bounding box
 @cindex bounding box
-Retrieve the bounding box of the PostScript image found in
+Retrieve the bounding box of the @sc{PostScript} image found in
 @var{filename}.  The file must conform to Adobe's @dfn{Document
 Structuring Conventions} (DSC); the command searches for a
 @code{%%BoundingBox} comment and extracts the bounding box values into
@@ -14664,6 +14759,7 @@ which are freely available.
 * gpic::
 * ggrn::
 * grap::
+* gchem::
 * grefer::
 * gsoelim::
 * preconv::
@@ -14764,7 +14860,7 @@ which are freely available.
 
 @c =====================================================================
 
-@node grap, grefer, ggrn, Preprocessors
+@node grap, gchem, ggrn, Preprocessors
 @section @code{grap}
 @cindex @code{grap}, the program
 
@@ -14778,7 +14874,30 @@ is available as an extra package from the following address:
 
 @c =====================================================================
 
-@node grefer, gsoelim, grap, Preprocessors
+@node gchem, grefer, grap, Preprocessors
+@section @code{gchem}
+@cindex @code{chem}, the program
+@cindex @code{gchem}, the program
+
+@c XXX
+
+@menu
+* Invoking gchem::
+@end menu
+
+@c ---------------------------------------------------------------------
+
+@node Invoking gchem,  , gchem, gchem
+@subsection Invoking @code{gchem}
+@cindex invoking @code{gchem}
+@cindex @code{gchem}, invoking
+
+@c XXX
+
+
+@c =====================================================================
+
+@node grefer, gsoelim, gchem, Preprocessors
 @section @code{grefer}
 @cindex @code{refer}, the program
 @cindex @code{grefer}, the program
@@ -14858,6 +14977,7 @@ is available as an extra package from the following address:
 * Special Characters::
 * grotty::
 * grops::
+* gropdf::
 * grodvi::
 * grolj4::
 * grolbp::
@@ -14884,7 +15004,9 @@ is available as an extra package from the following address:
 @section @code{grotty}
 @cindex @code{grotty}, the program
 
-@c XXX
+The postprocessor @code{grotty} translates the output from GNU
+@code{troff} into a form suitable for typewriter-like devices.  It is
+fully documented on its manual page, @cite{grotty(1)}.
 
 @menu
 * Invoking grotty::
@@ -14897,34 +15019,83 @@ is available as an extra package from the following address:
 @cindex invoking @code{grotty}
 @cindex @code{grotty}, invoking
 
-@c XXX
+The postprocessor @command{grotty} accepts the following command-line
+options:
 
-@c The following is no longer true; fix and extend it.
+@table @option
+@item -b
+Do not overstrike bold glyphs.  Ignored if @option{-c} isn't used.
 
-@c @pindex less
-@c @cindex Teletype
-@c @cindex ISO 6249 SGR
-@c @cindex terminal control sequences
-@c @cindex control sequences, for terminals
-@c For TTY output devices, underlining is done by emitting sequences of
-@c @samp{_} and @samp{\b} (the backspace character) before the actual
-@c character.  Literally, this is printing an underline character, then
-@c moving back one character position, and printing the actual character
-@c at the same position as the underline character (similar to a
-@c typewriter).  Usually, a modern terminal can't interpret this (and
-@c the original Teletype machines for which this sequence was
-@c appropriate are no longer in use).  You need a pager program like
-@c @code{less} which translates this into ISO 6429 SGR sequences to
-@c control terminals.
+@item -B
+Do not underline bold-italic glyphs.  Ignored if @option{-c} isn't
+used.
+
+@item -c
+Use overprint and disable colours for printing on legacy Teletype
+printers (see below).
+
+@item -d
+Do not render lines (this is, ignore all @code{\D} escapes).
+
+@item -f
+Use form feed control characters in the output.
+
+@item -F@var{dir}
+Put the directory @file{@var{dir}/dev@var{name}} in front of the
+search path for the font and device description files, given the
+target device @var{name}.
+
+@item -h
+Use horizontal tabs for sequences of 8 space characters.
+
+@item -i
+Request italic glyphs from the terminal.  Ignored if @option{-c} is
+active.
+
+@item -o
+Do not overstrike.
+
+@item -r
+Highlight italic glyphs.  Ignored if @option{-c} is active.
+
+@item -u
+Do not underline italic glyphs.  Ignored if @option{-c} isn't used.
+
+@item -U
+Do not overstrike bold-italic glyphs.  Ignored if @option{-c} isn't
+used.
+
+@item -v
+Print the version number.
+@end table
+
+@pindex less
+@cindex Teletype
+@cindex ISO 6249 SGR
+@cindex terminal control sequences
+@cindex control sequences, for terminals
+The @option{-c} mode for TTY output devices means that underlining is
+done by emitting sequences of @samp{_} and @samp{^H} (the backspace
+character) before the actual character.  Literally, this is printing
+an underline character, then moving the caret back one character
+position, and printing the actual character at the same position as
+the underline character (similar to a typewriter).  Usually, a modern
+terminal can't interpret this (and the original Teletype machines for
+which this sequence was appropriate are no longer in use).  You need
+a pager program like @code{less} which translates this into
+ISO@tie{}6429 SGR sequences to control terminals.
 
 
 @c =====================================================================
 
-@node grops, grodvi, grotty, Output Devices
+@node grops, gropdf, grotty, Output Devices
 @section @code{grops}
 @cindex @code{grops}, the program
 
-@c XXX
+The postprocessor @command{grops} translates the output from GNU
+@command{troff} into a form suitable for Adobe @sc{PostScript}
+devices.  It is fully documented on its manual page, @cite{grops(1)}.
+
 
 @menu
 * Invoking grops::
@@ -14938,7 +15109,56 @@ is available as an extra package from the following address:
 @cindex invoking @code{grops}
 @cindex @code{grops}, invoking
 
-@c XXX
+The postprocessor @code{grops} accepts the following command-line
+options:
+
+@table @option
+@item -b@var{flags}
+Use backward compatibility settings given by @var{flags} as
+documented in the @cite{grops(1)} manual page.  Overrides the command
+@option{broken} in the @file{DESC} file.
+
+@item -c@var{n}
+Print @var{n} copies of each page.
+
+@item -F@var{dir}
+Put the directory @file{@var{dir}/dev@var{name}} in front of the
+search path for the font, prologue and device description files,
+given the target device @var{name}, usually @strong{ps}.
+
+@item -g
+Tell the printer to guess the page length.  Useful for printing
+vertically centered pages when the paper dimensions are determined at
+print time.
+
+@item -I@var{path} @dots{}
+Consider the directory @file{@var{path}} for searching included files
+specified with relative paths.  The current directory is searched as
+fallback.
+
+@item -l
+Use landscape orientation.
+
+@item -m
+Use manual feed.
+
+@item -p@var{papersize}
+Set the page dimensions.  Overrides the commands @option{papersize},
+@option{paperlength}, and @option{paperwidth} in the @file{DESC}
+file.  See the @cite{groff_font(5)} manual page for details.
+
+@item -P@var{prologue}
+Use the @var{prologue} in the font path as the prologue instead of
+the default @file{prologue}.  Overrides the environment variable
+@env{GROPS_PROLOGUE}.
+
+@item -w@var{n}
+Set the line thickness to @var{n}/1000@dmn{em}.  Overrides the
+default value @var{n} = 40.
+
+@item -v
+Print the version number.
+@end table
 
 @c ---------------------------------------------------------------------
 
@@ -14947,16 +15167,122 @@ is available as an extra package from the following address:
 @cindex embedding PostScript
 @cindex PostScript, embedding
 
-@c XXX
+The escape sequence
+
+@code{\X'ps: import @var{file} @var{llx} @var{lly} @var{urx} @var{ury}
+  @var{width} [@var{height}]'}
+
+@noindent
+places a rectangle of the specified @var{width} containing the
+@sc{PostScript} drawing from file @var{file} bound by the box from
+@var{llx} @var{lly} to @var{urx} @var{ury} (in @sc{PostScript}
+coordinates) at the insertion point.  If @var{height} is not
+specified, the embedded drawing is scaled proportionally.
+
+@xref{Miscellaneous}, for the @code{psbb} request which automatically
+generates the bounding box.
+
+This escape sequence is used internally by the macro @code{PSPIC}
+(see the @cite{groff_tmac(5)} manual page).
 
 
 @c =====================================================================
 
-@node grodvi, grolj4, grops, Output Devices
+@node gropdf, grodvi, grops, Output Devices
+@section @code{gropdf}
+@cindex @code{gropdf}, the program
+
+The postprocessor @command{gropdf} translates the output from GNU
+@command{troff} into a form suitable for Adobe PDF devices.  It is fully
+documented on its manual page, @cite{gropdf(1)}.
+
+@menu
+* Invoking gropdf::
+* Embedding PDF::
+@end menu
+
+@c ---------------------------------------------------------------------
+
+@node Invoking gropdf, Embedding PDF, gropdf, gropdf
+@subsection Invoking @code{gropdf}
+@cindex invoking @code{gropdf}
+@cindex @code{gropdf}, invoking
+
+The postprocessor @code{gropdf} accepts the following command-line
+options:
+
+@table @option
+@item -d
+Produce uncompressed PDFs which include debugging comments.
+
+@item -e
+This forces @code{gropdf} to embed all used fonts in the PDF,
+even if they are one of the 14 base Adobe fonts.
+
+@item -F@var{dir}
+Put the directory @file{@var{dir}/dev@var{name}} in front of the
+search path for the font, prologue and device description files,
+given the target device @var{name}, usually @strong{pdf}.
+
+@item -y@var{foundry}
+This forces the use of a different font foundry.
+
+@item -l
+Use landscape orientation.
+
+@item -p@var{papersize}
+Set the page dimensions.  Overrides the commands @option{papersize},
+@option{paperlength}, and @option{paperwidth} in the @file{DESC}
+file.  See the @cite{groff_font(5)} manual page for details.
+
+@item -v
+Print the version number.
+
+@item -s
+Append a comment line to end of PDF showing statistics, i.e. number of
+pages in document.  Ghostscript's @cite{ps2pdf(1)} complains about this
+line if it is included, but works anyway.
+
+@item -u@var{filename}
+@code{gropdf} normally includes a ToUnicode CMap with any font created
+using @file{text.enc} as the encoding file, this makes it easier to
+search for words which contain ligatures.  You can include your own CMap
+by specifying a @var{filename} or have no CMap at all by omitting the
+@var{filename}.
+@end table
+
+@c ---------------------------------------------------------------------
+
+@node Embedding PDF,  , Invoking gropdf, gropdf
+@subsection Embedding PDF
+@cindex embedding PDF
+@cindex PDF, embedding
+
+The escape sequence
+
+@code{\X'pdf: pdfpic @var{file} @var{alignment} @var{width} [@var{height}]
+  [@var{linelength}]'}
+
+@noindent
+places a rectangle of the specified @var{width} containing the PDF
+drawing from file @var{file} of desired @var{width} and @var{height} (if
+@var{height} is missing or zero then it is scaled proportionally).  If
+@var{alignment} is @code{-L} the drawing is left aligned.  If it is
+@code{-C} or @code{-R} a @var{linelength} greater than the width of the
+drawing is required as well.  If @var{width} is specified as zero then
+the width is scaled in proportion to the height.
+
+
+@c =====================================================================
+
+@node grodvi, grolj4, gropdf, Output Devices
 @section @code{grodvi}
 @cindex @code{grodvi}, the program
 
-@c XXX
+The postprocessor @command{grodvi} translates the output from GNU
+@command{troff} into the @strong{DVI} output format compatible with
+the @strong{@TeX{}} document preparation system.  It is fully
+documented on its manual page, @cite{grodvi(1)}.
 
 @menu
 * Invoking grodvi::
@@ -14969,7 +15295,33 @@ is available as an extra package from the following address:
 @cindex invoking @code{grodvi}
 @cindex @code{grodvi}, invoking
 
-@c XXX
+The postprocessor @code{grodvi} accepts the following command-line
+options:
+
+@table @option
+@item -d
+Do not use @strong{tpic} specials to implement drawing commands.
+
+@item -F@var{dir}
+Put the directory @file{@var{dir}/dev@var{name}} in front of the
+search path for the font and device description files, given the
+target device @var{name}, usually @strong{dvi}.
+
+@item -l
+Use landscape orientation.
+
+@item -p@var{papersize}
+Set the page dimensions.  Overrides the commands @option{papersize},
+@option{paperlength}, and @option{paperwidth} in the @file{DESC}
+file.  See @cite{groff_font(5)} manual page for details.
+
+@item -v
+Print the version number.
+
+@item -w@var{n}
+Set the line thickness to @var{n}/1000@dmn{em}.  Overrides the
+default value @var{n} = 40.
+@end table
 
 
 @c =====================================================================
@@ -14978,7 +15330,10 @@ is available as an extra package from the following address:
 @section @code{grolj4}
 @cindex @code{grolj4}, the program
 
-@c XXX
+The postprocessor @command{grolj4} translates the output from GNU
+@command{troff} into the @strong{PCL5} output format suitable for
+printing on a @strong{HP LaserJet@tie{}4} printer.  It is fully
+documented on its manual page, @cite{grolj4(1)}.
 
 @menu
 * Invoking grolj4::
@@ -14991,7 +15346,37 @@ is available as an extra package from the following address:
 @cindex invoking @code{grolj4}
 @cindex @code{grolj4}, invoking
 
-@c XXX
+The postprocessor @code{grolj4} accepts the following command-line
+options:
+
+@table @option
+@item -c@var{n}
+Print @var{n} copies of each page.
+
+@item -F@var{dir}
+Put the directory @file{@var{dir}/dev@var{name}} in front of the
+search path for the font and device description files, given the
+target device @var{name}, usually @strong{lj4}.
+
+@item -l
+Use landscape orientation.
+
+@item -p@var{size}
+Set the page dimensions.  Valid values for @var{size} are:
+@code{letter}, @code{legal}, @code{executive}, @code{a4},
+@code{com10}, @code{monarch}, @code{c5}, @code{b5}, @code{d1}.
+
+@item -v
+Print the version number.
+
+@item -w@var{n}
+Set the line thickness to @var{n}/1000@dmn{em}.  Overrides the
+default value @var{n} = 40.
+@end table
+
+The special drawing command @code{\D'R @var{dh} @var{dv}'} draws a
+horizontal rectangle from the current position to the position at
+offset (@var{dh},@var{dv}).
 
 
 @c =====================================================================
@@ -15000,7 +15385,10 @@ is available as an extra package from the following address:
 @section @code{grolbp}
 @cindex @code{grolbp}, the program
 
-@c XXX
+The postprocessor @command{grolbp} translates the output from GNU
+@command{troff} into the @strong{LBP} output format suitable for
+printing on @strong{Canon CAPSL} printers.  It is fully documented on
+its manual page, @cite{grolbp(1)}.
 
 @menu
 * Invoking grolbp::
@@ -15013,7 +15401,39 @@ is available as an extra package from the following address:
 @cindex invoking @code{grolbp}
 @cindex @code{grolbp}, invoking
 
-@c XXX
+The postprocessor @code{grolbp} accepts the following command-line
+options:
+
+@table @option
+@item -c@var{n}
+Print @var{n} copies of each page.
+
+@item -F@var{dir}
+Put the directory @file{@var{dir}/dev@var{name}} in front of the
+search path for the font, prologue and device description files,
+given the target device @var{name}, usually @strong{lbp}.
+
+@item -l
+Use landscape orientation.
+
+@item -o@var{orientation}
+Use the @var{orientation} specified: @code{portrait} or
+@code{landscape}.
+
+@item -p@var{papersize}
+Set the page dimensions.  See @cite{groff_font(5)} manual page for
+details.
+
+@item -w@var{n}
+Set the line thickness to @var{n}/1000@dmn{em}.  Overrides the
+default value @var{n} = 40.
+
+@item -v
+Print the version number.
+
+@item -h
+Print command-line help.
+@end table
 
 
 @c =====================================================================
@@ -15030,7 +15450,7 @@ option.  If no files are given, @code{grohtml} will read the standard
 input.  A filename of @code{-} will also cause @code{grohtml} to read
 the standard input.  @acronym{HTML} output is written to the standard
 output.  When @code{grohtml} is run by @code{groff}, options can be
-passed to @code{grohtml} using @code{groff}'s @code{-P} option.
+passed to @code{grohtml} using @code{groff}'s @option{-P} option.
 
 @code{grohtml} invokes @code{groff} twice.  In the first pass, pictures,
 equations, and tables are rendered using the @code{ps} device, and in
@@ -15045,6 +15465,9 @@ safely ignored unless the special characters appear inside a table or
 equation, in which case glyphs for these characters must be defined for
 the @code{ps} device as well.
 
+This output device is fully documented on its manual page,
+@cite{grohtml(1)}.
+
 @menu
 * Invoking grohtml::
 * grohtml specific registers and strings::
@@ -15057,7 +15480,83 @@ the @code{ps} device as well.
 @cindex invoking @code{grohtml}
 @cindex @code{grohtml}, invoking
 
-@c XXX
+The postprocessor @code{grohtml} accepts the following command-line
+options:
+
+@table @option
+@item -a@var{bits}
+Use this number of @var{bits} (= 1, 2 or 4) for text antialiasing.
+Default: @var{bits} = 4.
+
+@item -a0
+Do not use text antialiasing.
+
+@item -b
+Use white background.
+
+@item -D@var{dir}
+Store rendered images in the directory @file{@var{dir}}.
+
+@item -F@var{dir}
+Put the directory @file{@var{dir}/dev@var{name}} in front of the
+search path for the font, prologue and device description files,
+given the target device @var{name}, usually @strong{html}.
+
+@item -g@var{bits}
+Use this number of @var{bits} (= 1, 2 or 4) for antialiasing of
+drawings.  Default: @var{bits} = 4.
+
+@item -g0
+Do not use antialiasing for drawings.
+
+@item -h
+Use the @code{B} element for section headings.
+
+@item -i@var{resolution}
+Use the @var{resolution} for rendered images.  Default:
+@var{resolution} = 100@dmn{dpi}.
+
+@item -I@var{stem}
+Set the images' @var{stem name}.  Default: @var{stem} =
+@file{grohtml-@var{XXX}} (@var{XXX} is the process ID).
+
+@item -j@var{stem}
+Place each section in a separate file called
+@file{@var{stem}-@var{n}.html} (where @var{n} is a generated section
+number).
+
+@item -l
+Do not generate the table of contents.
+
+@item -n
+Generate simple fragment identifiers.
+
+@item -o@var{offset}
+Use vertical paddding @var{offset} for images.
+
+@item -p
+Display the page rendering progress to @code{stderr}.
+
+@item -r
+Do not use horizontal rules to separate headers and footers.
+
+@item -s@var{size}
+Set the base font size, to be modified using the elements @code{BIG}
+and @code{SMALL}.
+
+@item -S@var{level}
+Generate separate files for sections at level @var{level}.
+
+@item -v
+Print the version number.
+
+@item -V
+Generate a validator button at the bottom.
+
+@item -y
+Generate a signature of groff after the validator button, if any.
+@end table
+
 
 @c ---------------------------------------------------------------------
 
@@ -15093,7 +15592,7 @@ troff -Txhtml
 @endExample
 
 @cindex MathML
-The PostScript device is used to create all the image files (for
+The @sc{PostScript} device is used to create all the image files (for
 @option{-Thtml}; if @option{-Txhtml} is used, all equations are passed
 to @code{geqn} to produce @acronym{MathML}, and the register
 @code{ps4html} enables the macro sets to ignore floating keeps, footers,
@@ -15865,7 +16364,7 @@ x stop
 
 @noindent
 This output can be fed into @code{grops} to get its representation as a
-PostScript file.
+@sc{PostScript} file.
 
 @item Low-resolution device @code{latin1}
 
@@ -15968,14 +16467,14 @@ The classical quasi device independence is not yet implemented.
 
 @item
 The old hardware was very different from what we use today.  So the
-@code{groff} devices are also fundamentally different from the ones in
-@acronym{AT&T} @code{troff}.  For example, the @acronym{AT&T} PostScript
-device is called @code{post} and has a resolution of only 720 units per
-inch, suitable for printers 20 years ago, while @code{groff}'s @code{ps}
-device has a resolution of 72000 units per inch.  Maybe, by implementing
-some rescaling mechanism similar to the classical quasi device
-independence, @code{groff} could emulate @acronym{AT&T}'s @code{post}
-device.
+@code{groff} devices are also fundamentally different from the ones
+in @acronym{AT&T} @code{troff}.  For example, the @acronym{AT&T}
+@sc{PostScript} device is called @code{post} and has a resolution of
+only 720 units per inch, suitable for printers 20 years ago, while
+@code{groff}'s @code{ps} device has a resolution of 72000 units per
+inch.  Maybe, by implementing some rescaling mechanism similar to the
+classical quasi device independence, @code{groff} could emulate
+@acronym{AT&T}'s @code{post} device.
 
 @item
 The B-spline command @samp{D~} is correctly handled by the intermediate
@@ -16083,9 +16582,9 @@ quantities are rounded to be multiples of this value.
 @cindex PostScript, PNG image generation
 @cindex PNG image generation from PostScript
 Needed for @code{grohtml} only.  It specifies the program to generate
-PNG images from PostScript input.  Under GNU/Linux this is usually
-@code{gs} but under other systems (notably cygwin) it might be set to
-another name.
+PNG images from @sc{PostScript} input.  Under GNU/Linux this is
+usually @code{gs} but under other systems (notably cygwin) it might
+be set to another name.
 
 @item paperlength @var{n}
 @kindex paperlength
@@ -16577,3 +17076,8 @@ accessed as @samp{\[xxx]}.
 
 
 @bye
+
+@c Local Variables:
+@c mode: texinfo
+@c coding: latin-1
+@c End:

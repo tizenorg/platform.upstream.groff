@@ -13,7 +13,8 @@ This file is part of groff, the GNU roff type-setting system.
 Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2008, 2009, 2010
   Free Software Foundation, Inc.
 written by Gaius Mulley <gaius@glam.ac.uk>, with additions by
-Werner Lemberg <wl@gnu.org> and Bernd Warken <bwarken@mayn.de>.
+Werner Lemberg <wl@gnu.org> and
+Bernd Warken <groff-bernd.warken-72@web.de>.
 
 groff is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -1008,6 +1009,7 @@ HTML always denotes XHTML also.
 .
 .\" which macro to use for LI
 .de www-push-li
+.  nr www-li-indent \\n[.i]
 .  nr www-depth +1
 .  ds www-level\\n[www-depth] \\$1\"
 .  ds www-ltag\\n[www-depth]

@@ -1,4 +1,4 @@
-# Copyright (C) 1989-2000, 2001, 2002, 2003, 2004, 2005, 2006, 2009, 2010
+# Copyright (C) 1989-2006, 2009-2013
 #   Free Software Foundation, Inc.
 #      Written by James Clark (jjc@jclark.com)
 # 
@@ -188,6 +188,8 @@ localtmacdir=$(dataprogramdir)/site-tmac
 # gxditview.
 appresdir=@appresdir@
 
+groffer_dir=@groffer_dir@
+
 # `tmacpath' says where to look for macro files.
 # The current directory will be prepended in unsafe mode only; the home
 # directory will be always added.
@@ -288,6 +290,7 @@ make_install_pdfdoc=@make_install_pdfdoc@
 # -DHAVE_STRING_H		if you have <string.h>
 # -DHAVE_STRINGS_H		if you have <strings.h>
 # -DHAVE_SYS_DIR_H		if you have <sys/dir.h>
+# -DHAVE_SYS_PARAM_H		if you have <sys/param.h>
 # -DHAVE_SYS_STAT_H		if you have <sys/stat.h>
 # -DHAVE_SYS_TIME_H		if you have <sys/time.h>
 # -DHAVE_SYS_TYPES_H		if you have <sys/types.h>
@@ -311,6 +314,7 @@ make_install_pdfdoc=@make_install_pdfdoc@
 # -DHAVE_STRERROR		if you have strerror()
 # -DHAVE_STRSEP			if you have strsep()
 # -DHAVE_STRTOL			if you have strtol()
+# -DHAVE_SYMLINK		if you have symlink()
 # -DHAVE_VSNPRINTF		if you have vsnprintf()
 #
 # -DNEED_DECLARATION_GETTIMEOFTODAY
@@ -351,6 +355,9 @@ make_install_pdfdoc=@make_install_pdfdoc@
 #				wait() indicates whether a core image was
 #				produced for a process that was terminated
 #				by a signal
+#
+# -DHAVE_WORKING_O_NOATIME      define if <fcntl.h>'s O_NOATIME flag works
+# -DHAVE_WORKING_O_NOFOLLOW     define if <fcntl.h>'s O_NOFOLLOW flag works
 #
 # -Duintmax_t=<value>		define to `unsigned long' or `unsigned long
 #				long' if <inttypes.h> does not exist
@@ -435,7 +442,7 @@ PURIFYCCFLAGS=
 # Passing down MAKEOVERRIDES prevents $(MAKE) from containing a second
 # copy of $(MDEFINES) when making individual directories; this could
 # cause the argument list to become too long on some systems.
-MDEFINES= \
+MDEFINES=\
   "ALT_AWK_PROGS=$(ALT_AWK_PROGS)" \
   "ALT_GHOSTSCRIPT_PROGS=$(ALT_GHOSTSCRIPT_PROGS)" \
   "AR=$(AR)" \
@@ -493,6 +500,7 @@ MDEFINES= \
   "YACC=$(YACC)" \
   "YACCFLAGS=$(YACCFLAGS)" \
   "appresdir=$(appresdir)" \
+  "groffer_dir=$(groffer_dir)" \
   "bindir=$(bindir)" \
   "common_words_file=$(common_words_file)" \
   "datadir=$(datadir)" \
@@ -543,7 +551,13 @@ MDEFINES= \
   "top_srcdir=$(top_srcdir)" \
   "version=$(version)"
 
-MAKE_K_FLAG=`case "$(MAKEFLAGS)" in *k*) echo ' -k ';; esac`
+MAKE_K_FLAG=`for f in x $(MAKEFLAGS); do \
+               case $$f in \
+                 *=* | --[!k]*);; \
+                 *k*) echo ' -k ';; \
+               esac; \
+             done`
+
 
 INCDIRS=\
   src/include
@@ -593,7 +607,8 @@ ALLTTYDEVDIRS=\
   font/devlatin1 \
   font/devutf8 \
   font/devcp1047
-# `doc' must be processed before `contrib/pdfmark'.
+# `doc' must be processed before `contrib/pdfmark',
+# pdf stuff must be processed before `contrib/mom
 OTHERDIRS=\
   man \
   tmac \
@@ -607,10 +622,15 @@ OTHERDIRS=\
   contrib/eqn2graph \
   contrib/grap2graph \
   contrib/groffer \
-  contrib/mom \
   contrib/hdtbl \
   contrib/pdfmark \
+  src/devices/gropdf \
+  font/devpdf \
+  contrib/mom \
   contrib/gdiffmk
+  
+# OTHERDIRS is handled specially in the `$(TARGETS)' rule to avoid
+# dependency problems with parallel builds.
 ALLDIRS=\
   $(INCDIRS) \
   $(LIBDIRS) \
@@ -618,8 +638,8 @@ ALLDIRS=\
   $(DEVDIRS) \
   $(XDEVDIRS) \
   $(OTHERDEVDIRS) \
-  $(TTYDEVDIRS) \
-  $(OTHERDIRS)
+  $(TTYDEVDIRS)
+# $(OTHERDIRS)
 EXTRADIRS=\
   font/devps/generate \
   font/devdvi/generate \
@@ -643,8 +663,10 @@ NOMAKEDIRS=\
   src/libs/gnulib/lib/uniwidth \
   src/libs/gnulib/m4 \
   src/libs/gnulib/build-aux \
+  src/libs/gnulib/build-aux/snippet \
   src/libs/gnulib \
   font/devps/old \
+  font/devpdf/util \
   font/util
 GNULIBDIRS=\
   src/libs/gnulib
@@ -680,13 +702,14 @@ ENVSETUP=\
 	fi
 
 do=all
-dodirs=$(ALLDIRS) dot
+dodirs=$(ALLDIRS) $(OTHERDIRS) dot
 # Default target for subdir_Makefile
 subdir=src/roff/troff
 
 
 $(TARGETS):
-	@$(ENVSETUP); $(MAKE) $(MAKE_K_FLAG) $(MDEFINES) do=$@ $(dodirs)
+	@$(ENVSETUP); $(MAKE) $(MAKE_K_FLAG) do=$@ $(ALLDIRS)
+	@$(ENVSETUP); $(MAKE) $(MAKE_K_FLAG) do=$@ $(OTHERDIRS) dot
 
 dot: FORCE
 	@$(ENVSETUP); \
@@ -699,7 +722,7 @@ $(LIBDIRS): FORCE $(INCDIRS) $(PROGDEPDIRS) $(GNULIBDIRS)
 	if test $(srcdir) = .; then \
 	  srcdir=.; \
 	else \
-	  srcdir=`cd $(srcdir); pwd`/$@; \
+	  srcdir=$(top_srcdir)/$@; \
 	fi; \
 	test -d $@ || $(mkinstalldirs) $@; \
 	cd $@; \
@@ -715,7 +738,7 @@ $(CPROGDIRS) $(XPROGDIRS): FORCE $(LIBDIRS)
 	if test $(srcdir) = .; then \
 	  srcdir=.; \
 	else \
-	  srcdir=`cd $(srcdir); pwd`/$@; \
+	  srcdir=$(top_srcdir)/$@; \
 	fi; \
 	test -d $@ || $(mkinstalldirs) $@; \
 	cd $@; \
@@ -731,7 +754,7 @@ $(CCPROGDIRS): FORCE $(LIBDIRS)
 	if test $(srcdir) = .; then \
 	  srcdir=.; \
 	else \
-	  srcdir=`cd $(srcdir); pwd`/$@; \
+	  srcdir=$(top_srcdir)/$@; \
 	fi; \
 	test -d $@ || $(mkinstalldirs) $@; \
 	cd $@; \
@@ -747,7 +770,7 @@ $(DEVDIRS) $(XDEVDIRS) $(OTHERDEVDIRS) $(TTYDEVDIRS): FORCE $(PROGDEPDIRS) $(CCP
 	if test $(srcdir) = .; then \
 	  srcdir=.; \
 	else \
-	  srcdir=`cd $(srcdir); pwd`/$@; \
+	  srcdir=$(top_srcdir)/$@; \
 	fi; \
 	test -d $@ || $(mkinstalldirs) $@; \
 	cd $@; \
@@ -761,14 +784,16 @@ $(GNULIBDIRS): FORCE
 	if test $(srcdir) = .; then \
 	  srcdir=.; \
 	else \
-	  srcdir=`cd $(srcdir); pwd`/$@; \
+	  srcdir=$(top_srcdir)/$@; \
 	fi; \
 	test -d $@ || $(mkinstalldirs) $@; \
 	case $(do) in \
 	all) \
-	cd $@; \
-	test -f Makefile || $(SHELL) $$srcdir/configure ; \
-	$(MAKE) ACLOCAL=: AUTOCONF=: AUTOHEADER=: AUTOMAKE=: $(do) ;; \
+	  cd $@; \
+	  args=`$(top_builddir)/config.status --config`; \
+	  test -f Makefile \
+	  || eval $$srcdir/configure "$$args" --srcdir=$$srcdir; \
+	  $(MAKE) ACLOCAL=: AUTOCONF=: AUTOHEADER=: AUTOMAKE=: $(do) ;; \
 	esac
 
 $(OTHERDIRS): $(PROGDEPDIRS) $(CCPROGDIRS) $(CPROGDIRS)
@@ -778,7 +803,7 @@ $(INCDIRS) $(PROGDEPDIRS) $(OTHERDIRS): FORCE
 	if test $(srcdir) = .; then \
 	  srcdir=.; \
 	else \
-	  srcdir=`cd $(srcdir); pwd`/$@; \
+	  srcdir=$(top_srcdir)/$@; \
 	fi; \
 	test -d $@ || $(mkinstalldirs) $@; \
 	cd $@; \
@@ -795,14 +820,13 @@ dist:
 	for d in $(DISTDIRS); do \
 	  $(mkinstalldirs) tmp/$$d; \
 	done
-	srcdir=`cd $(srcdir); pwd`; \
 	cd tmp; \
 	cp ../Makefile .; \
-	cp $$srcdir/* . 2>/dev/null || true; \
+	cp $(top_srcdir)/* . 2>/dev/null || true; \
 	rm -rf CVS; \
 	for d in $(DISTDIRS); do \
 	  (cd $$d; \
-	   cp $$srcdir/$$d/* . 2>/dev/null; \
+	   cp $(top_srcdir)/$$d/* . 2>/dev/null; \
 	   rm -rf CVS || true); \
 	done; \
 	$(MAKE) srcdir=. VPATH=. distfiles; \
@@ -816,7 +840,7 @@ dist:
 	   fi); \
 	done; \
 	rm -f Makefile; \
-	cp $$srcdir/Makefile.init Makefile
+	cp $(top_srcdir)/Makefile.init Makefile
 	mv tmp groff-$(version)$(revision)
 	tar cfh - groff-$(version)$(revision) | \
 	  gzip -c >groff-$(version)$(revision).tar.gz

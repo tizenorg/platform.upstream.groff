@@ -1,4 +1,4 @@
-    Copyright 2004, 2005, 2006, 2007, 2008, 2009
+    Copyright 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013
       Free Software Foundation, Inc.
 
     Copying and distribution of this file, with or without modification,
@@ -20,7 +20,58 @@ Also, please--no html email.  That, too, gets nuked.
 
 --Peter Schaffter
 
-========================================================================
+====================================================================
+
+Version 2.0
+===========
+
+tbl macros .TS/.TE not working unless inside a float.
+---Fixed---
+
+Terminal period after page number(s) in refer items not always
+printing.
+---Fixed---
+
+====================================================================
+
+Version 1.6-a
+===========
+
+Footnotes on last page of columnar docs before a TOC getting printed
+at bottom of last column, not current column.
+--Fixed---
+
+HEADER_RULE OFF turning off headers completely.
+---Fixed---
+
+FINIS depositing a blank final page when invoked too close to the
+bottom margin.
+---Fixed---
+
+Version 1-6
+===========
+
+ENDNOTE_STRING_CAPS not disabling caps when arg given.
+---Fixed---
+
+Superfluous blank line before paragraphs with paraheads.
+---Fixed---
+
+Paraheads causing line numbering to overprint two line numbers.
+---Fixed---
+
+Endless loop when DOC_LEAD_ADJUST is disabled. 
+---Fixed---
+
+In the case where the list doesn't fit the page, -mom inserts
+an extra page with one word and a warning about "environment stack
+underflow" and then continues on the following page.
+--Fixed--
+
+PRINTSTYLE TYPEWRITE not respecting TYPEWRITER_FAMILY when DOCTYPE
+is LETTER.
+---Fixed---
+
 Version 1.5-d
 =============
 

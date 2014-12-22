@@ -1,6 +1,5 @@
 // -*- C++ -*-
-/* Copyright (C) 1989, 1990, 1991, 1992, 2000, 2001, 2002, 2003, 2004, 2005,
-                 2006, 2007, 2008, 2009, 2010
+/* Copyright (C) 1989-1992, 2000-2011
    Free Software Foundation, Inc.
      Written by James Clark (jjc@jclark.com)
 
@@ -155,6 +154,9 @@ static int read_size(int *);
 static symbol get_delim_name();
 static void init_registers();
 static void trapping_blank_line();
+
+// this is for gcc 2.95 with old versions of libstdc++
+#define input_iterator my_input_iterator
 
 class input_iterator;
 input_iterator *make_temp_iterator(const char *);
@@ -2356,6 +2358,10 @@ int token::delimiter(int err)
       return 1;
     }
   case TOKEN_NODE:
+    // the user doesn't know what a node is
+    if (err)
+      error("missing argument or invalid starting delimiter");
+    return 0;
   case TOKEN_SPACE:
   case TOKEN_STRETCHABLE_SPACE:
   case TOKEN_UNSTRETCHABLE_SPACE:

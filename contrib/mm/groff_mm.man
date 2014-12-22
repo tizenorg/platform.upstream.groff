@@ -1,6 +1,6 @@
 '\" t
 .ig
-Copyright (C) 1989, 2000, 2001, 2002, 2003, 2006, 2007, 2009, 2010
+Copyright (C) 1989, 2000-2003, 2006, 2007, 2009-2011
   Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of
@@ -1010,7 +1010,7 @@ and
 with the text `chapter' and `,\~page'.
 The string
 .B Qrf
-contains the text for the reference:
+contains the text for the cross reference:
 .
 .RS
 .IP
@@ -1158,7 +1158,7 @@ and also less than or equal to
 .B Hb
 or
 .B Hs
-are centerered.
+are centered.
 .RE
 .
 .IP
@@ -1229,7 +1229,7 @@ Fourteen number registers named
 up to
 .B H14
 contain the counter for each heading level.
-The values are printed using arabic numerals;
+The values are printed using Arabic numerals;
 this can be changed with the macro
 .B HM
 (see below).
@@ -1474,9 +1474,9 @@ T}
 .
 .TP
 .BI INITR\  filename
-Initialize the refence macros.
-References are written to stderr and are supposed to
-be written to `\fIfilename\fR.qrf'. 
+Initialize the cross reference macros.
+Cross references are written to stderr and are supposed to
+be redirected into file `\fIfilename\fR.qrf'. 
 Requires two passes with groff;
 this is handled by a separate program called
 .BR mmroff (@MAN1EXT@).
@@ -1484,7 +1484,7 @@ This program exists because
 .BR groff (@MAN1EXT@)
 by default deactivates the unsafe operations that are required by
 .BR INITR .
-The first pass looks for references,
+The first pass looks for cross references,
 and the second one includes them.
 .B INITR
 can be used several times,
@@ -1590,7 +1590,7 @@ is still controlled by
 .IR text-indent .
 .
 .IP
-The mark is left-justified whitin the mark area if
+The mark is left-justified within the mark area if
 .I pad
 is\~0.
 If
@@ -1664,7 +1664,7 @@ Default is\~0.
 List-status clear.
 Terminates all current active lists down to
 .IR list-level ,
-or\~0 if no argmuent is given.
+or\~0 if no argument is given.
 This is used by\~\c
 .B H
 to clear any active list.
@@ -2243,10 +2243,7 @@ whether to eject a page or not.
 .TS
 tab(@);
 l lx.
-0@T{
-The reference page is printed on a separate page.
-This is the default.
-T}
+0@The reference page is printed on a separate page.
 1@Do not eject page after the list.
 2@Do not eject page before the list.
 3@Do not eject page before and after the list.
@@ -2263,6 +2260,11 @@ to\~0 suppresses the line.
 The string
 .B Rp
 contains the reference page title and is set to `REFERENCES' by default.
+The number register
+.B Rpe
+holds the default value for the second argument of
+.BR RP ;
+it is initially set to\~0.
 .
 .TP
 .BI RS\  \fR[\fPstring-name\fR]\fP
@@ -3353,6 +3355,12 @@ T}
 .RE
 .
 .IP
+Default is\~0.
+.
+.TP
+.B Rpe
+Set default value for second argument of
+.BR .RP .
 Default is\~0.
 .
 .TP

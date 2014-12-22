@@ -1,4 +1,4 @@
-# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2009
+# Copyright (C) 2002-2007, 2009, 2011, 2013
 #   Free Software Foundation, Inc.
 #      Written by Werner Lemberg <wl@gnu.org>
 # 
@@ -32,18 +32,17 @@ groff_bin_dirs=\
   $(top_builddir)/src/preproc/soelim \
   $(top_builddir)/src/preproc/html \
   $(top_builddir)/src/devices/grops \
+  $(top_builddir)/src/devices/gropdf \
   $(top_builddir)/src/devices/grohtml
 
 FFLAG=-F$(top_builddir)/font -F$(top_srcdir)/font
 TFLAG=-M$(top_builddir)/tmac -M$(top_srcdir)/tmac
 
 GROFF=\
-  GROFF_COMMAND_PREFIX=''; \
-  export GROFF_COMMAND_PREFIX; \
-  GROFF_BIN_PATH=$(GROFF_BIN_PATH); \
-  export GROFF_BIN_PATH; \
   sed -e "s;@VERSION@;$(version)$(revision);" $< \
-  | $(GROFFBIN) $(TFLAG) $(FFLAG) -Upet -ww
+  | GROFF_COMMAND_PREFIX= \
+    GROFF_BIN_PATH="$(GROFF_BIN_PATH)" \
+    $(GROFFBIN) $(TFLAG) $(FFLAG) -Upet -ww
 
 DOCFILES=\
   meref.me \
@@ -226,11 +225,11 @@ install_html: $(HTMLDOCFILES) $(HTMLEXAMPLEFILES)
 	  $(DESTDIR)$(exampleimagedir)
 
 uninstall_sub:
+	$(INSTALL_INFO) --remove --info-dir=$(DESTDIR)$(infodir) \
+	  $(DESTDIR)$(infodir)/groff.info
 	-for f in groff `ls groff.info*`; do \
 	  rm -f $(DESTDIR)$(infodir)/$$f; \
 	done
-	$(INSTALL_INFO) --remove --info-dir=$(DESTDIR)$(infodir) \
-	  $(DESTDIR)$(infodir)/groff.info
 	-for f in $(DOCFILES) $(PROCESSEDDOCFILES); do \
 	  rm -f $(DESTDIR)$(docdir)/$$f; \
 	done
@@ -243,5 +242,6 @@ uninstall_sub:
 	          `ls $(HTMLEXAMPLEFILESALL)`; do \
 	  rm -f $(DESTDIR)$(exampledir)/$$f; \
 	done
+	-rm -f $(DESTDIR)$(exampledir)/gnu.eps
 	-rm -f $(DESTDIR)$(exampleimagedir)/$(HTMLEXAMPLEIMAGEFILES)
 	-rmdir $(DESTDIR)$(exampleimagedir)

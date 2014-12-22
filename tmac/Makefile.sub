@@ -1,5 +1,4 @@
-# Copyright (C) 1989-2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2009,
-#               2010
+# Copyright (C) 1989-2007, 2009-2012
 #   Free Software Foundation, Inc.
 #      Written by James Clark (jjc@jclark.com)
 # 
@@ -38,6 +37,7 @@ NORMALFILES=\
   safer.tmac \
   trace.tmac \
   ps.tmac psold.tmac pspic.tmac psatk.tmac \
+  pdf.tmac \
   dvi.tmac \
   tty.tmac tty-char.tmac \
   latin1.tmac latin2.tmac latin5.tmac latin9.tmac cp1047.tmac \
@@ -48,8 +48,9 @@ NORMALFILES=\
   html.tmac html-end.tmac \
   devtag.tmac \
   europs.tmac \
-  composite.tmac \
+  composite.tmac fallbacks.tmac \
   eqnrc \
+  refer.tmac refer-me.tmac refer-ms.tmac \
   troffrc troffrc-end \
   trans.tmac \
   hyphen.us hyphenex.us \

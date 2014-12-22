@@ -4,10 +4,9 @@ groff.man
 
 This file is part of groff, the GNU roff type-setting system.
 
-Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-              2009, 2010
+Copyright (C) 2000-2010, 2012
   Free Software Foundation, Inc.
-written by Bernd Warken <bwarken@mayn.de>
+written by Bernd Warken <groff-bernd.warken-72@web.de>
 maintained by Werner Lemberg <wl@gnu.org>
 
 Permission is granted to copy, distribute and/or modify this document
@@ -118,7 +117,7 @@ FDL in the main directory of the groff source package.
 .\" Result : prints \name[arg], where `name' is in CB, `arg' in I
 .\"
 .de ESC[]
-.  Text "\f[CB]\[rs]\\$1\[lB]\f[]\f[I]\\$2\f[]\f[CB]\[rB]\f[]"
+.  Text "\f[CB]\[rs]\\$1\[lB]\f[]\,\f[I]\\$2\/\f[]\f[CB]\[rB]\f[]"
 ..
 .\" ---------------------------------------------------------------------
 .\" .ESCq name arg
@@ -130,7 +129,7 @@ FDL in the main directory of the groff source package.
 .\" Result : prints \name'arg', where `name' is in CB, `arg' in I
 .\"
 .de ESCq
-.  Text "\f[CB]\[rs]\\$1\[cq]\f[]\f[I]\\$2\f[]\f[CB]\[cq]\f[]"
+.  Text "\f[CB]\[rs]\\$1\[cq]\f[]\,\f[I]\\$2\/\f[]\f[CB]\[cq]\f[]"
 ..
 .\" ---------------------------------------------------------------------
 .\" .ESC? arg
@@ -141,7 +140,7 @@ FDL in the main directory of the groff source package.
 .\" Result : prints `\?arg?', where the `?' are in CB, `arg' in I
 .\"
 .de ESC?
-.  Text "\f[CB]\[rs]?\f[I]\\$1\f[CB]?\f[R]"
+.  Text "\f[CB]\[rs]?\,\f[I]\\$1\/\f[CB]?\f[R]"
 ..
 .\" ---------------------------------------------------------------------
 .\" .esc name [punct]
@@ -166,7 +165,7 @@ FDL in the main directory of the groff source package.
 .\"           `name' is in B, `arg' in I
 .\"
 .de escarg
-.  Text \f[B]\[rs]\\$1\f[]\f[I]\\$2\f[]\\$3
+.  Text \f[B]\[rs]\\$1\f[]\,\f[I]\\$2\/\f[]\\$3
 ..
 .\" ---------------------------------------------------------------------
 .\" .esc[] name arg [punct]
@@ -178,7 +177,7 @@ FDL in the main directory of the groff source package.
 .\" Result : prints \name[arg], where `name' is in CB, `arg' in CI
 .\"
 .de esc[]
-.  Text \f[B]\[rs]\\$1\[lB]\f[]\f[I]\\$2\f[]\f[B]\[rB]\f[]\\$3
+.  Text \f[CB]\[rs]\\$1\[lB]\f[]\,\f[CI]\\$2\/\f[]\f[CB]\[rB]\f[]\\$3
 ..
 .
 .\" ---------------------------------------------------------------------
@@ -191,7 +190,7 @@ FDL in the main directory of the groff source package.
 .\" Result : prints \name'arg', where `name' is in CB, `arg' in CI
 .\"
 .de escq
-.  Text \f[B]\[rs]\\$1\[cq]\f[]\f[I]\\$2\f[]\f[B]\[cq]\f[]\\$3
+.  Text \f[CB]\[rs]\\$1\[cq]\f[]\,\f[CI]\\$2\/\f[]\f[CB]\[cq]\f[]\\$3
 ..
 .
 .\" --------- strings ---------
@@ -344,7 +343,7 @@ operating mode, called the
 .BR "copy mode" .
 .
 .P
-The copy mode behavior can be quite tricky, but there are some rules
+The copy mode behaviour can be quite tricky, but there are some rules
 that ensure a safe usage.
 .
 .IP 1.
@@ -541,11 +540,7 @@ and
 .request while .
 There it is the control character that introduces a request (or macro).
 .
-The special behavior can be delayed by using the
-.esc .
-escape.
-.
-By using the 
+By using the
 .request cc
 request, the control character can be set to a different character,
 making the dot
@@ -567,7 +562,7 @@ non-breaking control character.
 That means that it introduces a request like the dot, but with the
 additional property that this request doesn't cause a linebreak.
 .
-By using the 
+By using the
 .request c2
 request, the non-break control character can be set to a different
 character.
@@ -624,7 +619,7 @@ The open parenthesis is only special in escape sequences when
 introducing an escape name or argument consisting of exactly two
 characters.
 .
-In groff, this behavior can be replaced by the \f[CB][]\f[] construct.
+In groff, this behaviour can be replaced by the \f[CB][]\f[] construct.
 .TP
 \&\f[CB][\f[]
 The opening bracket is only special in groff escape sequences; there
@@ -828,21 +823,21 @@ added the following operators for numerical expressions:
 .RS
 .
 .TPx
-\f[I]e1\f[CB]>?\f[I]e2\f[R]
+\f[I]e1\/\f[CB]>?\,\f[I]e2\f[R]
 The maximum of
 .I e1
 and
 .IR e2 .
 .
 .TPx
-\f[I]e1\f[CB]<?\f[I]e2\f[R]
+\f[I]e1\/\f[CB]<?\,\f[I]e2\f[R]
 The minimum of
 .I e1
 and
 .IR e2 .
 .
 .TPx
-\f[CB](\f[I]c\f[CB];\f[I]e\f[CB])\f[R]
+\f[CB](\,\f[I]c\/\f[CB];\,\f[I]e\/\f[CB])\f[R]
 Evaluate
 .I e
 using
@@ -883,7 +878,7 @@ yields true if its value is greater than\~0.
 .TPx
 .BI ! N
 True if the value of
-.I I
+.I N
 is\~0 (see below).
 .
 .TPx
@@ -1079,7 +1074,7 @@ Begin line adjustment for output lines in current adjust mode.
 .REQ .ad "c"
 Start line adjustment in mode
 .I c
-(\f[CI]c\f[]\f[CR]\|\^\[eq]\|l,r,b,n\f[]).
+(\f[CI]c\/\f[]\f[CR]\|\^\[eq]\|l,r,c,b,n\f[]).
 .
 .TPx
 .REQ .af "register c"
@@ -1087,7 +1082,7 @@ Assign format
 .I c
 to
 .I register
-(\f[CI]c\f[]\f[CR]\|\^\[eq]\|l,i,I,a,A\f[]).
+(\f[CI]c\/\f[]\f[CR]\|\^\[eq]\|l,i,I,a,A\f[]).
 .
 .TPx
 .REQ .aln "alias register"
@@ -1183,7 +1178,7 @@ Print a backtrace of the input on stderr.
 Embolden
 .I font
 by
-.IR N -1
+.IR N \\-1
 units.
 .
 .TPx
@@ -1907,7 +1902,7 @@ Change to the previous value of additional intra-line skip.
 Set additional intra-line skip value to
 .IR N ,
 i.e.,
-.IR N -1
+.IR N \\-1
 blank lines are inserted after each text output line.
 .
 .TPx
@@ -2660,12 +2655,12 @@ except that the terminating newline is ignored as well.
 .\" --------- strings ---------
 .
 .TP
-.ESC *\f[I]s\f[]
+.ESC * s
 The string stored in the string variable with one-character name\~\c
 .IR s .
 .
 .TP
-.ESC *(\f[I]st\f[]
+.ESC *( st
 The string stored in the string variable with two-character name
 .IR st .
 .
@@ -2769,7 +2764,9 @@ the underline character.
 .
 .TP
 .ESC .
-An uninterpreted dot (period), even at start of line.
+The same as a dot (`.').
+Necessary in nested macro definitions so that `\[rs]\[rs]..' expands to
+`..'.
 .
 .TP
 .ESC %
@@ -3455,7 +3452,7 @@ decoration is not part of the register name.
 .\" --------------------------------------------------------------------
 .
 The following registers have predefined values that should not be
-modified by the user (usually, registers starting with a dot a
+modified by the user (usually, registers starting with a dot are
 read-only).
 .
 Mostly, they provide information on the current settings or store
@@ -3466,7 +3463,7 @@ results from request calls.
 .
 .TPx
 .REG $$
-The process ID of 
+The process ID of
 .BR troff .
 .
 .TPx
@@ -3635,7 +3632,7 @@ Positive if last output line contains
 .REG .j
 The current adjustment mode.
 It can be stored and used to set adjustment.
-(n=1, b=1, l=0, r=5, c=3).
+(n\ =\ 1, b\ =\ 1, l\ =\ 0, r\ =\ 5, c\ =\ 3).
 .
 .TPx
 .REG .k
@@ -3895,11 +3892,11 @@ Height of last completed diversion.
 .
 .TPx
 .REG dw
-Current day of week (1-7).
+Current day of week (1\(en7).
 .
 .TPx
 .REG dy
-Current day of month (1-31).
+Current day of month (1\(en31).
 .
 .TPx
 .REG hours
@@ -3944,7 +3941,7 @@ Initialized at start-up.
 .
 .TPx
 .REG mo
-Current month (1-12).
+Current month (1\(en12).
 .
 .TPx
 .REG nl
@@ -4080,7 +4077,7 @@ be reproduced, and say which version of groff you are using.
 .SH AUTHORS
 .\" --------------------------------------------------------------------
 .
-Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009
+Copyright (C) 2000\(en2010, 2012
 Free Software Foundation, Inc.
 .
 .P
@@ -4099,7 +4096,7 @@ This document is part of
 the GNU roff distribution.
 .
 It was written by
-.MT bwarken@mayn.de
+.MT groff-bernd.warken-72@web.de
 Bernd Warken
 .ME ;
 it is maintained by

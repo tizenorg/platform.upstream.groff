@@ -1,4 +1,4 @@
-.\" Copyright (C) 2006, 2007, 2008, 2009
+.\" Copyright (C) 2006-2011
 .\"   Free Software Foundation, Inc.
 .\"      Written by Eric S. Raymond <esr@thyrsus.com>
 .\"
@@ -30,7 +30,7 @@
 .\" Eric S. Raymond <esr@thyrsus.com> in August 1995.  It has been put
 .\" under the GPL in March 2006.
 .\"
-.\"	$Id: pic.ms,v 1.45 2010/09/19 07:46:27 wl Exp $	
+.\"	$Id: pic.ms,v 1.49 2011/07/26 17:11:10 wl Exp $	
 .
 .
 .\" Set a proper TeX and LaTeX
@@ -188,7 +188,7 @@ This was produced from the following \fBpic\fP program:
 \&.PS
 ellipse "document";
 arrow;
-box width 0.6 "\efIpic\e/\efP(1)"
+box width 0.6 "\efIgpic\e/\efP(1)"
 arrow;
 box width 1.1 "\efIgtbl\e/\efP(1) or \efIgeqn\e/\efP(1)" "(optional)" dashed;
 arrow;
@@ -862,7 +862,7 @@ In GNU \fBgpic\fR, objects can have an
 .B aligned
 attribute.
 This only works if the postprocessor is
-\fBgrops\fP.
+\fBgrops\fP or \fBgropdf\fP.
 Any text associated with an object having the
 .B aligned
 attribute is rotated about the center of the object
@@ -1202,12 +1202,12 @@ Interpolation Between Positions
 A position may be interpolated between any two positions.  The syntax
 is `\fIfraction\fP \fBof the way between\fP \fIposition1\fP \fBand\fP
 \fIposition2\fP'.  For example, you can say \fB1/3 of the way between
-here and last ellipse .ne\fP.  The fraction may be in
+Here and last ellipse .ne\fP.  The fraction may be in
 numerator/denominator form or may be an ordinary number (values are
 \fInot\fP restricted to [0,1]).  As an alternative to this verbose
 syntax, you can say `\fIfraction\fP  \fB<\,\fP\fIposition1\fP \fB,\fP
 \fIposition2\/\fP\fB>\fP'; thus, the example could also be written as
-\fB1/3 <here, last ellipse>\fP.
+\fB1/3 <Here, last ellipse>\fP.
 .KS
 .PS
 arrow up right;

@@ -1,7 +1,6 @@
 '\" t
 .ig
-Copyright (C) 1989-1995, 2001, 2002, 2003, 2004, 2006, 2007, 2008,
-              2009, 2010
+Copyright (C) 1989-1995, 2001-2004, 2006-2013
   Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of
@@ -361,11 +360,15 @@ Not allowed for the first row.
 .TP
 .BR _ , -
 Replace this entry with a horizontal line.
+Note that `_' and `-' can be used for table fields only,
+not for column separator lines.
 .
 .TP
 .B =
 .
 Replace this entry with a double horizontal line.
+Note that `=' can be used for table fields only,
+not for column separator lines.
 .
 .TP
 .B |
@@ -398,8 +401,63 @@ Short form of
 .
 .TP
 .BR d , D
-Start an item vertically spanning rows at the bottom of its range rather
+Start an item that vertically spans rows,
+using the `^' column specifier or `\[rs]^' data item,
+at the bottom of its range rather
 than vertically centering it (GNU tbl only).
+Example:
+.RS
+.IP
+.EX
+\&.TS
+\&tab(;) allbox;
+\&l l
+\&l ld
+\&r ^
+\&l rd.
+\&0000;foobar
+\&T{
+\&1111
+\&.br
+\&2222
+\&T};foo
+\&r;
+\&T{
+\&3333
+\&.br
+\&4444
+\&T};bar
+\&\[rs]^;\[rs]^
+\&.TE
+.EE
+.RE
+.
+.IP
+Result:
+.
+.RS
+.IP
+.TS
+tab(;) allbox;
+l l
+l ld
+r ^
+l rd.
+0000;foobar
+T{
+1111
+.br
+2222
+T};foo
+r;
+T{
+3333
+.br
+4444
+T};bar
+\^;\^
+.TE
+.RE
 .
 .TP
 .BR e , E
@@ -478,7 +536,7 @@ No effect if the corresponding table entry isn't a text block.
 .
 .TP
 .BR w , W
-Minimal column width value.
+Minimum column width value.
 Must be followed either by a
 .BR @g@troff (@MAN1EXT@)
 width expression in parentheses or a unitless integer.
@@ -684,16 +742,6 @@ should always be called before
 .RB ( groff (@MAN1EXT@)
 automatically takes care of the correct order of preprocessors).
 .
-.LP
-It is not advisable to use the hash character (#) as a delimiter for in-line
-equations in
-.BR @g@eqn (@MAN1EXT@)
-since
-.B @g@tbl
-uses a macro called
-.BR .T# ,
-causing a clash.
-.
 .
 .SH "GNU TBL ENHANCEMENTS"
 There is no limit on the number of columns in a table, nor any limit on the
@@ -813,6 +861,48 @@ this:
 \&A\[rs]*a;B
 \&.TE
 .EE
+.
+.
+.LP
+A leading and/or trailing `|' in a format line, such as
+.
+.IP
+.EX
+|l r|.
+.EE
+.
+.LP
+gives output which has a 1n\~space between the resulting
+bordering vertical rule and the content of the adjacent column,
+as in
+.
+.IP
+.EX
+\&.TS
+\&tab(#);
+\&|l r|.
+\&left column#right column
+\&.TE
+.EE
+.
+.LP
+If it is desired to have zero space (so that the rule touches
+the content), this can be achieved by introducing extra \[lq]dummy\[rq]
+columns, with no content and zero separation, before and/or after,
+as in
+.
+.IP
+.EX
+\&.TS
+\&tab(#);
+\&r0|l r0|l.
+\&#left column#right column#
+\&.TE
+.EE
+.
+.LP
+The resulting \[lq]dummy\[rq] columns are invisible and have zero width;
+note that such columns usually don't work with TTY devices.
 .
 .
 .SH REFERENCE

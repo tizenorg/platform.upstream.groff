@@ -1,10 +1,9 @@
 This is groff.info, produced by makeinfo version 4.13 from
 ./groff.texinfo.
 
-This manual documents GNU `troff' version 1.21.
+This manual documents GNU `troff' version 1.22.2.
 
-   Copyright (C) 1994-2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,
-2008, 2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 1994-2013 Free Software Foundation, Inc.
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -52,10 +51,9 @@ GNU troff
 * Program and File Index::
 * Concept Index::
 
-   This manual documents GNU `troff' version 1.21.
+   This manual documents GNU `troff' version 1.22.2.
 
-   Copyright (C) 1994-2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,
-2008, 2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 1994-2013 Free Software Foundation, Inc.
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -326,9 +324,10 @@ need to construct the pipe, but only tell `groff' what preprocessors to
 use.
 
    `groff' currently has preprocessors for producing tables (`tbl'),
-typesetting equations (`eqn'), drawing pictures (`pic' and `grn'), and
-for processing bibliographies (`refer').  An associated program which
-is useful when dealing with preprocessors is `soelim'.
+typesetting equations (`eqn'), drawing pictures (`pic' and `grn'),
+processing bibliographies (`refer'), and drawing chemical structures
+(`chem').  An associated program which is useful when dealing with
+preprocessors is `soelim'.
 
    A free implementation of `grap', a preprocessor for drawing graphs,
 can be obtained as an extra package; `groff' can use `grap' also.
@@ -337,9 +336,8 @@ can be obtained as an extra package; `groff' can use `grap' also.
 `groff' to handle documents in various input encodings.
 
    There are other preprocessors in existence, but, unfortunately, no
-free implementations are available.  Among them are preprocessors for
-drawing mathematical pictures (`ideal') and chemical structures
-(`chem').
+free implementations are available.  Among them is a preprocessor for
+drawing mathematical pictures (`ideal').
 
 
 File: groff.info,  Node: Output device intro,  Next: Credits,  Prev: Preprocessor Intro,  Up: Introduction
@@ -351,7 +349,7 @@ File: groff.info,  Node: Output device intro,  Next: Credits,  Prev: Preprocesso
 a postprocessor to produce output for a particular device.  Currently,
 `groff' has postprocessors for POSTSCRIPT devices, character terminals,
 X Windows (for previewing), TeX DVI format, HP LaserJet 4 and Canon LBP
-printers (which use CAPSL), HTML, and XHTML.
+printers (which use CAPSL), HTML, XHTML, and PDF.
 
 
 File: groff.info,  Node: Credits,  Prev: Output device intro,  Up: Introduction
@@ -414,22 +412,22 @@ File: groff.info,  Node: Groff Options,  Next: Environment,  Prev: Invoking grof
 appropriate for the selected device.  The default device is `ps' (but
 it can be changed when `groff' is configured and built).  It can
 optionally preprocess with any of `gpic', `geqn', `gtbl', `ggrn',
-`grap', `grefer', `gsoelim', or `preconv'.
+`grap', `gchem', `grefer', `gsoelim', or `preconv'.
 
    This section only documents options to the `groff' front end.  Many
 of the arguments to `groff' are passed on to `gtroff', therefore those
 are also included.  Arguments to pre- or postprocessors can be found in
 *note Invoking gpic::, *note Invoking geqn::, *note Invoking gtbl::,
-*note Invoking ggrn::, *note Invoking grefer::, *note Invoking
-gsoelim::, *note Invoking preconv::, *note Invoking grotty::, *note
-Invoking grops::, *note Invoking grohtml::, *note Invoking grodvi::,
-*note Invoking grolj4::, *note Invoking grolbp::, and *note Invoking
-gxditview::.
+*note Invoking ggrn::, *note Invoking grefer::, *note Invoking gchem::,
+*note Invoking gsoelim::, *note Invoking preconv::, *note Invoking
+grotty::, *note Invoking grops::, *note Invoking gropdf::, *note
+Invoking grohtml::, *note Invoking grodvi::, *note Invoking grolj4::,
+*note Invoking grolbp::, and *note Invoking gxditview::.
 
    The command line format for `groff' is:
 
 
-     groff [ -abceghiklpstvzCEGNRSUVXZ ] [ -dCS ] [ -DARG ]
+     groff [ -abceghijklpstvzCEGNRSUVXZ ] [ -dCS ] [ -DARG ]
            [ -fFAM ] [ -FDIR ] [ -IDIR ] [ -KARG ]
            [ -LARG ] [ -mNAME ] [ -MDIR ] [ -nNUM ]
            [ -oLIST ] [ -PARG ] [ -rCN ] [ -TDEF ]
@@ -510,7 +508,7 @@ to format a file.
      Preprocess with `ggrn'.
 
 `-G'
-     Preprocess with `grap'.
+     Preprocess with `grap'.  Implies `-p'.
 
 `-h'
      Print a help message.
@@ -536,6 +534,9 @@ to format a file.
      specified more than once; the directories are searched in the order
      specified.  No directory search is performed for files specified
      using an absolute path.
+
+`-j'
+     Preprocess with `gchem'.  Implies `-p'.
 
 `-k'
      Preprocess with `preconv'.  This is run before any other
@@ -631,6 +632,9 @@ to format a file.
 
     `ps'
           For POSTSCRIPT printers and previewers.
+
+    `pdf'
+          For PDF viewers or printers.
 
     `dvi'
           For TeX DVI format.
@@ -739,10 +743,10 @@ not within `gtroff') which can modify the behavior of `groff'.
 
 `GROFF_COMMAND_PREFIX'
      If this is set to X, then `groff' runs `Xtroff' instead of
-     `gtroff'.  This also applies to `tbl', `pic', `eqn', `grn',
+     `gtroff'.  This also applies to `tbl', `pic', `eqn', `grn', `chem',
      `refer', and `soelim'.  It does not apply to `grops', `grodvi',
-     `grotty', `pre-grohtml', `post-grohtml', `preconv', `grolj4', and
-     `gxditview'.
+     `grotty', `pre-grohtml', `post-grohtml', `preconv', `grolj4',
+     `gropdf', and `gxditview'.
 
      The default command prefix is determined during the installation
      process.  If a non-GNU troff system is found, prefix `g' is used,
@@ -815,11 +819,11 @@ files are (in that order):
 
           /usr/local/lib/groff/site-tmac
           /usr/local/share/groff/site-tmac
-          /usr/local/share/groff/1.21/tmac
+          /usr/local/share/groff/1.22.2/tmac
 
-     assuming that the version of `groff' is 1.21, and the installation
-     prefix was `/usr/local'.  It is possible to fine-tune those
-     directories during the installation process.
+     assuming that the version of `groff' is 1.22.2, and the
+     installation prefix was `/usr/local'.  It is possible to fine-tune
+     those directories during the installation process.
 
 
 File: groff.info,  Node: Font Directories,  Next: Paper Size,  Prev: Macro Directories,  Up: Invoking groff
@@ -855,11 +859,11 @@ DVI output, and `/foo/bar' as a font directory, the font files for
 
 
           /usr/local/share/groff/site-font
-          /usr/local/share/groff/1.21/font
+          /usr/local/share/groff/1.22.2/font
 
-     assuming that the version of `groff' is 1.21, and the installation
-     prefix was `/usr/local'.  It is possible to fine-tune those
-     directories during the installation process.
+     assuming that the version of `groff' is 1.22.2, and the
+     installation prefix was `/usr/local'.  It is possible to fine-tune
+     those directories during the installation process.
 
 
 File: groff.info,  Node: Paper Size,  Next: Invocation Examples,  Prev: Font Directories,  Up: Invoking groff
@@ -1407,6 +1411,7 @@ non-option arguments; the above (failing) sample is thus reordered to
 * ms::
 * me::
 * mm::
+* mom::
 
 
 File: groff.info,  Node: man,  Next: mdoc,  Prev: Macro Packages,  Up: Macro Packages
@@ -2417,8 +2422,10 @@ File: groff.info,  Node: Paragraphs in ms,  Next: Headings in ms,  Prev: ms Body
 The following paragraph types are available.
 
  -- Macro: .PP
- -- Macro: .LP
      Sets a paragraph with an initial indentation.
+
+ -- Macro: .LP
+     Sets a paragraph without an initial indentation.
 
  -- Macro: .QP
      Sets a paragraph that is indented at both left and right margins.
@@ -3499,13 +3506,23 @@ See the `meintro.me' and `meref.me' documents in groff's `doc'
 directory.
 
 
-File: groff.info,  Node: mm,  Prev: me,  Up: Macro Packages
+File: groff.info,  Node: mm,  Next: mom,  Prev: me,  Up: Macro Packages
 
 4.5 `mm'
 ========
 
 See the `groff_mm(7)' man page (type `man groff_mm' at the command
 line).
+
+
+File: groff.info,  Node: mom,  Prev: mm,  Up: Macro Packages
+
+4.6 `mom'
+=========
+
+See the `groff_mom(7)' man page (type `man groff_mom' at the command
+line), which gives a short overview and a link to its extensive
+documentation in HTML format.
 
 
 File: groff.info,  Node: gtroff Reference,  Next: Preprocessors,  Prev: Macro Packages,  Up: Top
@@ -3909,7 +3926,7 @@ File: groff.info,  Node: Expressions,  Next: Identifiers,  Prev: Measurements,  
      beginning of an expression, and negates the entire expression.
      Attempting to insert the `!' operator within the expression
      results in a `numeric expression expected' warning.  This
-     maintains bug-compatibility with old versions of `troff'.
+     maintains compatibility with old versions of `troff'.
 
      Example:
 
@@ -4517,6 +4534,10 @@ File: groff.info,  Node: Setting Registers,  Next: Interpolating Registers,  Pre
 
 Define or set registers using the `nr' request or the `\R' escape.
 
+   Although the following requests and escapes can be used to create
+registers, simply using an undefined register will cause it to be set
+to zero.
+
  -- Request: .nr ident value
  -- Escape: \R'ident value'
      Set number register IDENT to VALUE.  If IDENT doesn't exist,
@@ -4553,7 +4574,7 @@ Define or set registers using the `nr' request or the `\R' escape.
           .tm :k == \n[:k]
               => :k == 15000
 
-     If you process this with the PostScript device (`-Tps'), there
+     If you process this with the POSTSCRIPT device (`-Tps'), there
      will be a line break eventually after `ggg' in both input lines.
      However, after processing the space after `ggg', the partially
      collected line is not overfull yet, so `troff' continues to
@@ -5011,26 +5032,48 @@ request.
      Finally, MODE can be the numeric argument returned by the `.j'
      register.
 
-     With no argument, `gtroff' adjusts lines in the same way it did
-     before adjusting was deactivated (with a call to `na', for
-     example).
+     Using `ad' without argument is the same as saying `.ad \[.j]'.  In
+     particular, `gtroff' adjusts lines in the same way it did before
+     adjusting was deactivated (with a call to `na', say).  For
+     example, this input code
 
 
-          text
-          .ad r
+          .de AD
+          .  br
+          .  ad \\$1
+          ..
+          .
+          .de NA
+          .  br
+          .  na
+          ..
+          .
+          textA
+          .AD r
           .nr ad \n[.j]
-          text
-          .ad c
-          text
-          .na
-          text
-          .ad         \" back to centering
-          text
-          .ad \n[ad]  \" back to right justifying
+          textB
+          .AD c
+          textC
+          .NA
+          textD
+          .AD         \" back to centering
+          textE
+          .AD \n[ad]  \" back to right justifying
+          textF
 
-     The current adjustment mode is available in the read-only number
-     register `.j'; it can be stored and subsequently used to set
-     adjustment.
+     produces the following output:
+
+
+          textA
+                                                              textB
+                                    textC
+          textD
+                                    textE
+                                                              textF
+
+     As just demonstrated, the current adjustment mode is available in
+     the read-only number register `.j'; it can be stored and
+     subsequently used to set adjustment.
 
      The adjustment mode status is associated with the current
      environment (*note Environments::).
@@ -6497,6 +6540,10 @@ and bottom titles (or headers and footers).
 
      Some notes:
 
+        * The line length set by the `ll' request is not honoured by
+          `tl'; use the `lt' request (described below) instead, to
+          control line length for text set by `tl'.
+
         * A title line is not restricted to the top or bottom of a page.
 
         * `tl' prints the title line immediately, ignoring a partially
@@ -6790,9 +6837,10 @@ of "font families" and "font styles".  The fonts are specified as the
 concatenation of the font family and style.  Specifying a font without
 the family part causes `gtroff' to use that style of the current family.
 
-   Currently, fonts for the devices `-Tps', `-Tdvi', `-Tlj4', `-Tlbp',
-and the X11 fonts are set up to this mechanism.  By default, `gtroff'
-uses the Times family with the four styles `R', `I', `B', and `BI'.
+   Currently, fonts for the devices `-Tps', `-Tpdf', `-Tdvi', `-Tlj4',
+`-Tlbp', and the X11 fonts are set up to this mechanism.  By default,
+`gtroff' uses the Times family with the four styles `R', `I', `B', and
+`BI'.
 
    This way, it is possible to use the basic four fonts and to select a
 different font family on the command line (*note Groff Options::).
@@ -7137,8 +7185,8 @@ is called "groff glyph list (GGL)".
         * Any component `uXXXX' which is found in the list of
           decomposable glyphs is decomposed.
 
-        * The resulting elements are then concatenated with `_'
-          inbetween, dropping the leading `u' in all elements but the
+        * The resulting elements are then concatenated with `_' in
+          between, dropping the leading `u' in all elements but the
           first.
 
      No check for the existence of any component (similar to `tr'
@@ -7524,7 +7572,8 @@ separate programs.  Most of them are no longer necessary in GNU
      The read-only number register `.height' contains the font height as
      set by `\H'.
 
-     Currently, only the `-Tps' device supports this feature.
+     Currently, only the `-Tps' and `-Tpdf' devices support this
+     feature.
 
      Note that `\H' doesn't produce an input token in `gtroff'.  As a
      consequence, it can be used in requests like `mc' (which expects a
@@ -7553,7 +7602,8 @@ separate programs.  Most of them are no longer necessary in GNU
      The read-only number register `.slant' contains the font slant as
      set by `\S'.
 
-     Currently, only the `-Tps' device supports this feature.
+     Currently, only the `-Tps' and `-Tpdf' devices support this
+     feature.
 
      Note that `\S' doesn't produce an input token in `gtroff'.  As a
      consequence, it can be used in requests like `mc' (which expects a
@@ -8062,6 +8112,10 @@ File: groff.info,  Node: Strings,  Next: Conditionals and Loops,  Prev: Sizes,  
 `gtroff' has string variables, which are entirely for user convenience
 (i.e. there are no built-in strings exept `.T', but even this is a
 read-write string variable).
+
+   Although the following requests can be used to create strings,
+simply using an undefined string will cause it to be defined as empty.
+*Note Identifiers::.
 
  -- Request: .ds name [string]
  -- Request: .ds1 name [string]
