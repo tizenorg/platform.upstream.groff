@@ -1,14 +1,15 @@
 Name:           groff
 Version:        1.22.2
-Release:        1
+Release:        0
 License:        BSD-3-Clause and GPL-2.0+
 Summary:        A document formatting system
 Url:            http://groff.ffii.org
 Group:          Base/Utilities
 Source:         %{name}-%{version}.tar.gz
-Source1001: 	groff.manifest
+Source1001:     groff.manifest
 BuildRequires:  bison
 BuildRequires:  zlib-devel
+BuildRequires:  fdupes
 Requires:       /usr/bin/mktemp
 
 %description
@@ -34,35 +35,34 @@ to automatically determine groff command-line options, and the
 troff-to-ps print filter.
 
 
-
 %prep
 %setup -q
 cp %{SOURCE1001} .
 
 %build
 %configure --enable-multibyte
-make
+%__make
 
 %install
 mkdir -p %{buildroot}%{_prefix} %{buildroot}%{_infodir}
-make install manroot=%{buildroot}%{_mandir} \
-			bindir=%{buildroot}%{_bindir} \
-			mandir=%{buildroot}%{_mandir} \
-			prefix=%{buildroot}/usr \
-			exec_prefix=%{buildroot}/usr \
-			sbindir=%{buildroot}%{_exec_prefix}/sbin \
-			sysconfdir=%{buildroot}/etc \
-			datadir=%{buildroot}/usr/share \
-			infodir=%{buildroot}/%{_prefix}/info \
-			sysconfdir=%{buildroot}/etc \
-			includedir=%{buildroot}/usr/include \
-			libdir=%{buildroot}/%{_libdir} \
-			libexecdir=%{buildroot}/usr/libexec \
-			localstatedir=%{buildroot}/var \
-			sharedstatedir=%{buildroot}/usr/com \
-			infodir=%{buildroot}/usr/share/info
+%make_install manroot=%{buildroot}%{_mandir} \
+              bindir=%{buildroot}%{_bindir} \
+              mandir=%{buildroot}%{_mandir} \
+              prefix=%{buildroot}%{_prefix} \
+              exec_prefix=%{buildroot}%{_prefix} \
+              sbindir=%{buildroot}%{_exec_prefix}/sbin \
+              sysconfdir=%{buildroot}%{_sysconfdir} \
+              datadir=%{buildroot}%{_datadir} \
+              infodir=%{buildroot}%{_prefix}/info \
+              sysconfdir=%{buildroot}%{_sysconfdir}\
+              includedir=%{buildroot}%{_includedir} \
+              libdir=%{buildroot}%{_libdir} \
+              libexecdir=%{buildroot}%{_prefix}/libexec \
+              localstatedir=%{buildroot}/var \
+              sharedstatedir=%{buildroot}%{_prefix}/com \
+              infodir=%{buildroot}%{_infodir}
 
-#install -m 644 doc/groff.info* %{buildroot}/%{_infodir}
+#install -m 644 doc/groff.info* %%{buildroot}%%{_infodir}
 ln -s s.tmac %{buildroot}%{_datadir}/groff/%{version}/tmac/gs.tmac
 ln -s mse.tmac %{buildroot}%{_datadir}/groff/%{version}/tmac/gmse.tmac
 ln -s m.tmac %{buildroot}%{_datadir}/groff/%{version}/tmac/gm.tmac
@@ -80,25 +80,26 @@ ln -s nroff	%{buildroot}%{_bindir}/gnroff
 
 
 find %{buildroot}%{_bindir} -type f -o -type l | \
-	grep -v afmtodit | grep -v grog | grep -v mdoc.samples |\
-	grep -v mmroff |\
-	grep -v gxditview |\
-	sed "s|%{buildroot}||g" | sed "s|\.[0-9]|\.*|g" > groff-files
+    grep -v afmtodit | grep -v grog | grep -v mdoc.samples | \
+    grep -v mmroff | \
+    grep -v gxditview | \
+    sed "s|%{buildroot}||g" | sed "s|\.[0-9]|\.*|g" > groff-files
 
-ln -sf doc.tmac %{buildroot}%{_datadir}/groff/%{version}/tmac/docj.tmac
+ln -sf doc.tmac %{buildroot}%{_datadir}/%{name}/%{version}/tmac/docj.tmac
 # installed, but not packaged in rpm
-mkdir -p %{buildroot}%{_datadir}/groff/%{version}/groffer/
-chmod 755 %{buildroot}%{_libdir}/groff/groffer/version.sh
-mv %{buildroot}%{_libdir}/groff/groffer/* %{buildroot}/%{_datadir}/groff/%{version}/groffer/
+mkdir -p %{buildroot}%{_datadir}/%{name}/%{version}/groffer/
+chmod 755 %{buildroot}%{_libdir}/%{name}/groffer/version.sh
+mv %{buildroot}%{_libdir}/%{name}/groffer/* %{buildroot}/%{_datadir}/%{name}/%{version}/groffer/
 
+%fdupes %{buildroot}
 
 %remove_docs
 
-%files -f groff-files
+%files -f %{name}-files
 %license COPYING LICENSES
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
-%{_datadir}/groff
+%{_datadir}/%{name}
 
 %files perl
 %license COPYING LICENSES
