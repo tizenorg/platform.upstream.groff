@@ -1,5 +1,5 @@
 Name:           groff
-Version:        1.21
+Version:        1.22.2
 Release:        1
 License:        BSD-3-Clause and GPL-2.0+
 Summary:        A document formatting system
